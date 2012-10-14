@@ -1,1 +1,1 @@
-Check for branches
+Learning of JPA2 with Hibernate
