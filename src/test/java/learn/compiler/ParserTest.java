@@ -127,4 +127,36 @@ public class ParserTest extends TestCase {
 		
 		assertEquals(exp.toString(), ast.toString());
 	}
+	
+	public void testEmptyExpression(){
+		Token[] tokens = new Token[]{
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpression(0);
+
+		assertEquals(null, r);
+	}
+	
+	public void testSemicolonExpression(){
+		Token[] tokens = new Token[]{
+			Token.SEMICOLON(";")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpression(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("expression");
+		exp.addChild(new AST("statement"));
+		
+		assertEquals(exp.toString(), ast.toString());
+	}
 }

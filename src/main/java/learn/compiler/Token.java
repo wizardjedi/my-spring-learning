@@ -13,6 +13,10 @@ public class Token {
 		return new Token(TokenTypeEnum.ATOM, text);
 	}
 	
+	static Token SEMICOLON(String text) {
+		return new Token(TokenTypeEnum.SEMICOLON, text);
+	}
+	
 	public static Token STRING(String text) {
 		return new Token(TokenTypeEnum.STRING, text);
 	}

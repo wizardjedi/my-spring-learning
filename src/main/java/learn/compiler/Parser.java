@@ -6,15 +6,15 @@ import java.util.List;
 /**
  * code = code_block*
  * code_block = function_declaration | event_declaration
- * function_declaration = KW_FUNCTION ATOM LBRACE params RBRACE function_body_declaration {global.functions.add(ATOM.text)}
- * params = param? (COMMA param)
- * param = statement 
- * function_body_declaration = LFBRACE expression* LFBRACE
+ * + function_declaration = KW_FUNCTION ATOM LBRACE params RBRACE function_body_declaration {global.functions.add(ATOM.text)}
+ * + formal_params = formal_param? | formal_param (COMMA formal_param)+ 
+ * + formal_param = ATOM
+ * + function_body_declaration = LFBRACE expression* LFBRACE
  * event_declaration = KW_BEGIN? LFBRACE expression* RFBRACE
- * expression = statement DELIMETER
+ * expression = statement? DELIMETER
  * statement = assign | function_call | expr
  * assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
- * function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement (COMMA statement)* RBRACE
+ * function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
  * 
  * variable = ATOM {IF ATOM.text IN global.variables}
  * expr = NUMBER | variable | variable INCREMENT | STRING
@@ -228,10 +228,38 @@ public class Parser {
 			&& r1 != null
 			&& r1.getToken().getTokenType() == TokenTypeEnum.RFBRACE
 		) {
-			return new Return(r0.getStart(), r1.getStop(), r1.getStop() +1, new AST("function_body"));
+			return new Return(r0.getStart(), r1.getStop(), r1.getNext(), new AST("function_body"));
 		} else {
 			return new Return(base, base, base, new AST(""));
 		}
+	}
+	
+	/**
+	 * expression = statement? DELIMETER
+	 */
+	public Return parseExpression(int base) {
+		Return r = parseStatement(base);
+		
+		Return delim = look(r.getNext(), 0);
+		
+		if (
+			delim != null
+			&& delim.getToken() != null
+			&& delim.getToken().getTokenType() == TokenTypeEnum.SEMICOLON
+		) {
+			AST ast = new AST("expression");
+
+			ast.addChild(r.getAst());
+			
+			return new Return(r.getStart(),delim.getStop(),delim.getNext(),ast);
+		} else {
+			return null;
+		}
+	}
+	
+	
+	public Return parseStatement(int base) {
+		return new Return(0,0,0,new AST("statement"));
 	}
 	
 	public class Return {
