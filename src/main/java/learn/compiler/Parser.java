@@ -11,8 +11,8 @@ import java.util.List;
  * + formal_param = ATOM
  * + function_body_declaration = LFBRACE expression* LFBRACE
  * event_declaration = KW_BEGIN? LFBRACE expression* RFBRACE
- * expression = statement? DELIMETER
- * statement = assign | function_call | expr
+ * + expression = statement? DELIMETER
+ * + statement = assign | function_call | expr
  * assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
  * function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
  * 
@@ -257,9 +257,56 @@ public class Parser {
 		}
 	}
 	
-	
+	/**
+	 * statement = assign | function_call | expr
+	 */
 	public Return parseStatement(int base) {
-		return new Return(0,0,0,new AST("statement"));
+		Return parseAssign = parseAssign(base);
+		
+		AST ast = new AST("statement");
+		
+		if (parseAssign != null) {
+			ast.addChild(parseAssign.getAst());
+					
+			return new Return(parseAssign.getStart(), parseAssign.getStop(), parseAssign.getNext(), ast);
+		} else {
+			Return parseFunctionCall = parseFunctionCall(base);
+			
+			if (parseFunctionCall != null) {
+				ast.addChild(parseFunctionCall.getAst());
+					
+				return new Return(parseFunctionCall.getStart(), parseFunctionCall.getStop(), parseFunctionCall.getNext(), ast);
+			} else {
+				Return parseExpr = parseExpr(base);
+				
+				if (parseExpr != null) {
+					ast.addChild(parseExpr.getAst());
+					
+					return new Return(parseExpr.getStart(), parseExpr.getStop(), parseExpr.getNext(), ast);
+				} else {
+					return new Return(base, base, base, ast);
+				}
+			}
+		}
+	}
+	
+	/*
+	 * assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
+	 */
+	public Return parseAssign(int base) {
+		Return r1 = look(base, 0);
+		Return r2 = look(base, 1);
+		Return r3 = look(base, 2);
+		
+		return null;
+	}
+	
+	public Return parseFunctionCall(int base) {
+		return null;
+	}
+	
+	public Return parseExpr(int base) {
+		return null;
 	}
 	
 	public class Return {
