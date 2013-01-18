@@ -2,7 +2,6 @@ package learn.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
-import learn.compiler.Token;
 
 /**
  * code = code_block*
@@ -121,7 +120,7 @@ public class Parser {
 		}
 		
 		try {
-			return new Return(pos, pos, tokenStream.get(pos));
+			return new Return(pos, pos, pos+1, tokenStream.get(pos));
 		} catch (IndexOutOfBoundsException e) {
 			return null;
 		}
@@ -148,21 +147,21 @@ public class Parser {
 			
 			int start = r0.getStart();
 			
-			Return formalParamsReturn = parseFormalParams(r2.getStop()+1);
+			Return formalParamsReturn = parseFormalParams(r2.getNext());
 			
-			Return r4 = look(formalParamsReturn.getStop()+1,1);
+			ast.addChild(formalParamsReturn.getAst());
+			
+			Return r4 = look(formalParamsReturn.getNext(),0);
 
-			System.out.println(r4.getToken());
-			
 			if (
 				r4 != null
 				&& r4.getToken().getTokenType() == TokenTypeEnum.RBRACE
 			) {
-				Return functionBody = parseFunctionBody(r4.getStop()+1);
+				Return functionBody = parseFunctionBody(r4.getNext());
+
+				ast.addChild(functionBody.getAst());
 				
-				ast.addChild(r4.getAst());
-				
-				return new Return(r0.getStart(), functionBody.getStop(), ast );
+				return new Return(r0.getStart(), functionBody.getStop(),functionBody.getNext(), ast );
 			}
 		}
 		
@@ -181,7 +180,7 @@ public class Parser {
 		Return r0 = look(base, 0);
 		
 		if (r0 == null) {
-			return new Return(base-1, base-1, ast);
+			return new Return(base, base, base, ast);
 		}
 		
 		Token t0 = r0.getToken();
@@ -212,10 +211,10 @@ public class Parser {
 				pos+=2;
 			}
 		} else {
-			return new Return(base-1, base-1, ast);
+			return new Return(base, base, base, ast);
 		}
 		
-		return new Return(start, stop, ast);
+		return new Return(start, stop, stop +1, ast);
 	}
 
 	public Return parseFunctionBody(int base) {
@@ -229,28 +228,39 @@ public class Parser {
 			&& r1 != null
 			&& r1.getToken().getTokenType() == TokenTypeEnum.RFBRACE
 		) {
-			return new Return(r0.getStart(), r1.getStop(), new AST("function_body"));
+			return new Return(r0.getStart(), r1.getStop(), r1.getStop() +1, new AST("function_body"));
 		} else {
-			return new Return(base-1, base-1, new AST(""));
+			return new Return(base, base, base, new AST(""));
 		}
 	}
 	
 	public class Return {
 		protected int start;
 		protected int stop;
+		protected int next;
 		protected AST ast;
 		protected Token token;
 		
-		public Return(int start, int stop, Token t) {
+		public Return(int start, int stop, int next, Token t) {
 			this.start = start;
 			this.stop = stop;
+			this.next = next;
 			this.token = t;
 		}
 		
-		public Return(int start, int stop, AST ast) {
+		public Return(int start, int stop, int next, AST ast) {
 			this.start = start;
 			this.stop = stop;
+			this.next = next;
 			this.ast = ast;
+		}
+		
+		public int getNext() {
+			return next;
+		}
+
+		public void setNext(int next) {
+			this.next = next;
 		}
 		
 		public int getStart() {
@@ -283,6 +293,18 @@ public class Parser {
 
 		public void setToken(Token token) {
 			this.token = token;
+		}
+
+		@Override
+		public String toString() {
+			return 
+				"Return{" 
+					+ "start=" + start 
+					+ ", stop=" + stop 
+					+ ", next=" + next 
+					+ (ast != null ? ", ast=" + ast : "") 
+					+ (token != null ? ", token=" + token : "") 
+					+ '}';
 		}
 	}
 }

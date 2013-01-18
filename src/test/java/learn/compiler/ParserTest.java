@@ -21,6 +21,9 @@ public class ParserTest extends TestCase {
 		Parser p = new Parser(list);
 		
 		Parser.Return r = p.parseFunctionDeclaration(0);
+		
+		assertTrue(r!=null);
+		
 		AST ast = r.getAst();
 		
 		AST expectedAst = new AST("function_declaration");
@@ -103,8 +106,8 @@ public class ParserTest extends TestCase {
 		AST exp = new AST("formal_params");
 		
 		assertEquals(exp.toString(), ast.toString());
-		assertEquals(-1, r.getStart());
-		assertEquals(-1, r.getStop());
+		assertEquals(0, r.getStart());
+		assertEquals(0, r.getStop());
 	}
 	
 	public void testRBraceParseNoParams(){
