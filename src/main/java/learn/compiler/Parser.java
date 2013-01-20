@@ -13,11 +13,11 @@ import java.util.List;
  * + event_declaration = KW_BEGIN? LFBRACE expression* RFBRACE
  * + expression = statement? DELIMETER
  * + statement = assign | function_call | expr
- * + assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
- * + function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
+ * ++ assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
+ * ++ function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
  * 
- * + variable = ATOM {IF ATOM.text IN global.variables}
- * + expr = NUMBER | variable | variable INCREMENT | STRING | MACRO
+ * ++ variable = ATOM {IF ATOM.text IN global.variables}
+ * ++ expr = NUMBER | variable | variable INCREMENT | STRING | MACRO
  */
 public class Parser {
 	protected List<Token> tokenStream;
@@ -75,6 +75,7 @@ public class Parser {
 		AST ast = new AST("code_block");
 		
 		Return functionReturn = parseFunctionDeclaration(base);
+
 		if (functionReturn != null) {
 			ast.addChild(functionReturn.getAst());
 			
@@ -180,13 +181,15 @@ public class Parser {
 				r4 != null
 				&& r4.getToken().getTokenType() == TokenTypeEnum.RBRACE
 			) {
-				Return functionBody = parseFunctionBody(r4.getNext());
+				int next = r4.getNext();
+				
+				Return functionBody = parseFunctionBody(next);
 
 				if (functionBody!=null) {
 					ast.addChild(functionBody.getAst());
-				}
 				
-				return new Return(r0.getStart(), functionBody.getStop(),functionBody.getNext(), ast );
+					return new Return(r0.getStart(), functionBody.getStop(),functionBody.getNext(), ast );
+				}
 			}
 		}
 		
@@ -256,14 +259,16 @@ public class Parser {
 			Return expressionReturn = parseExpression(next);
 			
 			if (expressionReturn!=null) {
-				while(expressionReturn.getStop() != expressionReturn.getNext()) {
-					if (
-						expressionReturn.getStop() != expressionReturn.getNext()
-					) {
+				while(
+					expressionReturn != null
+					&& expressionReturn.getStop() != expressionReturn.getNext()
+				) {
+					if (expressionReturn.getStop() != expressionReturn.getNext()) {
 						ast.addChild(expressionReturn.getAst());
 					}
 
 					next = expressionReturn.getNext();
+					expressionReturn = parseExpression(next);
 				}
 			}
 			
@@ -341,13 +346,9 @@ public class Parser {
 	 * assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
 	 */
 	public Return parseAssign(int base) {
-		Return r1 = look(base, 0);
+		Return r1 = parseVariable(base);
 		
-		if (
-			r1 != null
-			&& r1.getToken() != null
-			&& r1.getToken().getTokenType() == TokenTypeEnum.ATOM
-		) {
+		if (r1 != null) {
 			Return r2 = look(base, 1);
 			
 			if (
@@ -360,6 +361,7 @@ public class Parser {
 				if (r3 != null) {
 					AST ast = new AST("assign");
 					
+					ast.addChild(r1.getAst());
 					ast.addChild(r3.getAst());
 					
 					return new Return(r1.getStart(), r3.getStop(), r3.getNext(), ast);
@@ -395,7 +397,10 @@ public class Parser {
 			
 			AST paramsAst = new AST("params");
 			
-			if (returnStatement!=null) {
+			if (
+				returnStatement!=null
+				&& returnStatement.getStop() != returnStatement.getNext()
+			) {
 				paramsAst.addChild(returnStatement.getAst());
 				
 				next = returnStatement.getNext();

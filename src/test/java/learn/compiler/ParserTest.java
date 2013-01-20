@@ -267,13 +267,148 @@ public class ParserTest extends TestCase {
 		assertEquals(exp, ast);
 	}
 	
+	public void testEmptyFunctionCall(){
+		Token[] tokens = new Token[]{
+			Token.ATOM("testFunction"),
+			Token.LBRACE("("),
+			Token.RBRACE(")"),
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseFunctionCall(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("function_call");
+		exp.addChild(new AST("testFunction"));
+		exp.addChild(new AST("params"));
+		
+		assertEquals(exp, ast);
+	}
+	
+	public void testSingleParamFunctionCall(){
+		Token[] tokens = new Token[]{
+			Token.ATOM("testFunction"),
+			Token.LBRACE("("),
+			Token.ATOM("param1"),
+			Token.RBRACE(")"),
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseFunctionCall(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("function_call");
+		exp.addChild(new AST("testFunction"));
+		exp.addChild(
+			new AST("params")
+				.addChild(
+					new AST("statement")
+						.addChild(
+							new AST("expr")
+								.addChild(
+									new AST("variable")
+										.addChild(new AST("param1"))
+								)
+						)
+				)
+		);
+		
+		assertEquals(exp, ast);
+	}
+	
+	public void testManyParamFunctionCall(){
+		Token[] tokens = new Token[]{
+			Token.ATOM("testFunction"),
+			Token.LBRACE("("),
+			Token.ATOM("param1"),
+			Token.COMMA(","),
+			Token.ATOM("param2"),
+			Token.RBRACE(")"),
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseFunctionCall(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("function_call");
+		exp.addChild(new AST("testFunction"));
+		exp.addChild(
+			new AST("params")
+				.addChild(
+					new AST("statement")
+						.addChild(
+							new AST("expr")
+								.addChild(
+									new AST("variable")
+										.addChild(new AST("param1"))
+								)
+						)
+				)
+				.addChild(
+					new AST("statement")
+						.addChild(
+							new AST("expr")
+								.addChild(
+									new AST("variable")
+										.addChild(new AST("param2"))
+								)
+						)
+				)
+		);
+		
+		assertEquals(exp, ast);
+	}
+	
+	public void testAssign(){
+		Token[] tokens = new Token[]{
+			Token.ATOM("var1"),
+			Token.ASSIGN("="),
+			Token.ATOM("param1")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseAssign(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("assign");
+		exp.addChild(
+			new AST("variable")
+				.addChild(new AST("var1"))
+		);
+		exp.addChild(
+			new AST("expr")
+				.addChild(
+					new AST("variable")
+						.addChild(new AST("param1"))
+				)
+		);
+		
+		assertEquals(exp, ast);
+	}
+	
 	protected void assertEquals(AST exp, AST real) {
 		assertEquals(exp.getValue(), real.getValue());
 		
-		assertTrue(exp.hasChildren() == real.hasChildren());
+		assertTrue("Child nodes present is not match",exp.hasChildren() == real.hasChildren());
 		
 		if (exp.hasChildren()) {
-			assertTrue(exp.getChildren().size() == real.getChildren().size());
+			assertTrue("Child nodes count is not equal",exp.getChildren().size() == real.getChildren().size());
 
 			for (int i=0;i<real.getChildren().size();i++) {
 				assertEquals(exp.getChildren().get(i), real.getChildren().get(i));

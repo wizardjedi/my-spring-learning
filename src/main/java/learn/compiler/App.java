@@ -16,13 +16,13 @@ public class App
 				+ "print all values */\n"
 				+ "\n\n\n"
 				+ "function doPrint (i,b )	{\n"
-				+ "\tprint \"String number is:\", a,\" values is \",b;\n"
+				+ "\tprint (\"String number is:\", a,\" values is \",b);\n"
 				+ "}\n"
 				+ "BEGIN {i=1;}\n"
 				+ "{\n"
 				+ "i++;\n"
 				+ "doPrint(i, __LINE__);\n"
-				+ "}";
+				+ "}\n";
 		
 		String testData = "5\n"
 				+ "6\n"

@@ -9,6 +9,10 @@ public class Token {
 	protected int stop;
 	protected String text;
 
+	public static Token ASSIGN(String text) {
+		return new Token(TokenTypeEnum.ASSIGN, text);
+	}
+	
 	public static Token ATOM(String text) {
 		return new Token(TokenTypeEnum.ATOM, text);
 	}

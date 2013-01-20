@@ -23,20 +23,24 @@ public class AST {
 		return value;
 	}
 
-	public void setValue(Object value) {
+	public AST setValue(Object value) {
 		this.value = value;
+		
+		return this;
 	}
 	
 	public AST(Object value) {
 		this.value = value;
 	}
 	
-	public void addChild(AST ast) {
+	public AST addChild(AST ast) {
 		if (children == null) {
 			children = new ArrayList<AST>();
 		}
 		
 		children.add(ast);
+		
+		return this;
 	}
 	
 	public boolean hasChildren(){
