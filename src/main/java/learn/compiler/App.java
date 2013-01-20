@@ -49,5 +49,7 @@ public class App
 		System.out.println("<rules>");
 		System.out.println(ast);
 		System.out.println("</rules>");
+		
+		// Prepare semantic model
     }
 }
