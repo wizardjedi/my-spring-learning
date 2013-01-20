@@ -1,6 +1,5 @@
 package learn.compiler;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import junit.framework.TestCase;
@@ -31,7 +30,7 @@ public class ParserTest extends TestCase {
 		expectedAst.addChild(new AST("formal_params"));
 		expectedAst.addChild(new AST("function_body"));
 		
-		assertEquals(expectedAst.toString(), ast.toString());
+		assertEquals(expectedAst, ast);
 	}
 	
 	public void testNoFunctionBody() {
@@ -49,7 +48,7 @@ public class ParserTest extends TestCase {
 		
 		AST exp = new AST("function_body");
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testParseParams(){
@@ -70,7 +69,7 @@ public class ParserTest extends TestCase {
 		exp.addChild(new AST("param1"));
 		exp.addChild(new AST("param2"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testParseSingleParams(){
@@ -88,7 +87,7 @@ public class ParserTest extends TestCase {
 		AST exp = new AST("formal_params");
 		exp.addChild(new AST("param1"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testParseNoParams(){
@@ -105,7 +104,7 @@ public class ParserTest extends TestCase {
 		
 		AST exp = new AST("formal_params");
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 		assertEquals(0, r.getStart());
 		assertEquals(0, r.getStop());
 	}
@@ -125,7 +124,7 @@ public class ParserTest extends TestCase {
 		
 		AST exp = new AST("formal_params");
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testEmptyExpression(){
@@ -157,7 +156,7 @@ public class ParserTest extends TestCase {
 		AST exp = new AST("expression");
 		exp.addChild(new AST("statement"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testNumberExpr(){
@@ -178,7 +177,7 @@ public class ParserTest extends TestCase {
 		exp.addChild(num);
 		num.addChild(new AST("123"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testStringExpr(){
@@ -199,7 +198,7 @@ public class ParserTest extends TestCase {
 		exp.addChild(num);
 		num.addChild(new AST("testString"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testMacroExpr(){
@@ -220,7 +219,7 @@ public class ParserTest extends TestCase {
 		exp.addChild(num);
 		num.addChild(new AST("__LINE__"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testVariableExpr(){
@@ -241,7 +240,7 @@ public class ParserTest extends TestCase {
 		exp.addChild(num);
 		num.addChild(new AST("var123"));
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
 	}
 	
 	public void testVariableIncrementExpr(){
@@ -265,6 +264,20 @@ public class ParserTest extends TestCase {
 		num.addChild(new AST("var123"));
 		inc.addChild(num);
 		
-		assertEquals(exp.toString(), ast.toString());
+		assertEquals(exp, ast);
+	}
+	
+	protected void assertEquals(AST exp, AST real) {
+		assertEquals(exp.getValue(), real.getValue());
+		
+		assertTrue(exp.hasChildren() == real.hasChildren());
+		
+		if (exp.hasChildren()) {
+			assertTrue(exp.getChildren().size() == real.getChildren().size());
+
+			for (int i=0;i<real.getChildren().size();i++) {
+				assertEquals(exp.getChildren().get(i), real.getChildren().get(i));
+			}
+		}
 	}
 }
