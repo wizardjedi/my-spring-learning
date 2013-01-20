@@ -13,7 +13,7 @@ public class App
 		String testcode = "\n"
 				+ "\n"
 				+ "/* this function will \n"
-				+ "print all values */\n"
+				+ "print all values with comments */\n"
 				+ "\n\n\n"
 				+ "function doPrint (i,b )	{\n"
 				+ "\tprint (\"String number is:\", a,\" values is \",b);\n"
