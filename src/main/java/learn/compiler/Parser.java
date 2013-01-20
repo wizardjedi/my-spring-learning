@@ -10,14 +10,14 @@ import java.util.List;
  * + formal_params = formal_param? | formal_param (COMMA formal_param)+ 
  * + formal_param = ATOM
  * + function_body_declaration = LFBRACE expression* LFBRACE
- * event_declaration = KW_BEGIN? LFBRACE expression* RFBRACE
+ * + event_declaration = KW_BEGIN? LFBRACE expression* RFBRACE
  * + expression = statement? DELIMETER
  * + statement = assign | function_call | expr
- * assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
- * function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
+ * + assign = ATOM ASSIGN expr {global.variables.add(ATOM.text)}
+ * + function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
  * 
- * variable = ATOM {IF ATOM.text IN global.variables}
- * expr = NUMBER | variable | variable INCREMENT | STRING
+ * + variable = ATOM {IF ATOM.text IN global.variables}
+ * + expr = NUMBER | variable | variable INCREMENT | STRING | MACRO
  */
 public class Parser {
 	protected List<Token> tokenStream;
@@ -36,7 +36,9 @@ public class Parser {
 	}
 
 	public AST parse(){
-		AST codeAST = parseCode();
+		Return codeReturn = parseCode(0);
+		
+		AST codeAST = codeReturn.getAst();
 		
 		return codeAST;
 	}
@@ -49,24 +51,45 @@ public class Parser {
 		}
 	}
 	
-	public AST parseCode() {
+	public Return parseCode(int base) {
 		AST ast = new AST("code");
 		
-		//while (hasTokens()) {
-			ast.addChild(parseCodeBlock());
-		//}
-		return ast;
+		int next = base;
+		int stop = base;
+		
+		Return codeBlockReturn = parseCodeBlock(base);
+		while (codeBlockReturn != null) {
+			ast.addChild(codeBlockReturn.getAst());
+			next = codeBlockReturn.getNext();
+			stop = codeBlockReturn.getStop();
+			codeBlockReturn = parseCodeBlock(next);
+		}
+		
+		return new Return(base, stop, next, ast);
 	}
 	
-	public AST parseCodeBlock(){
-		AST ast = null;
-		/*AST ast = parseFunctionDeclaration();
+	/*
+	 * code_block = function_declaration | event_declaration
+	 */
+	public Return parseCodeBlock(int base){
+		AST ast = new AST("code_block");
 		
-		if (ast == null) {
-			ast = parseEventDeclaration();
-		}*/
+		Return functionReturn = parseFunctionDeclaration(base);
+		if (functionReturn != null) {
+			ast.addChild(functionReturn.getAst());
+			
+			return new Return(functionReturn.getStart(), functionReturn.getStop(), functionReturn.getNext(), ast);
+		} else {
+			Return eventDeclarationReturn = parseEventDeclaration(base);
+			
+			if (eventDeclarationReturn != null) {
+				ast.addChild(eventDeclarationReturn.getAst());
+			
+				return new Return(eventDeclarationReturn.getStart(), eventDeclarationReturn.getStop(), eventDeclarationReturn.getNext(), ast);
+			}
+		}
 		
-		return ast;
+		return null;
 	}
 	
 	protected void nextToken(){
@@ -159,7 +182,9 @@ public class Parser {
 			) {
 				Return functionBody = parseFunctionBody(r4.getNext());
 
-				ast.addChild(functionBody.getAst());
+				if (functionBody!=null) {
+					ast.addChild(functionBody.getAst());
+				}
 				
 				return new Return(r0.getStart(), functionBody.getStop(),functionBody.getNext(), ast );
 			}
@@ -219,19 +244,41 @@ public class Parser {
 
 	public Return parseFunctionBody(int base) {
 		Return r0 = look(base, 0);
-		// HACK!
-		Return r1 = look(base, 1);
+		
+		AST ast = new AST("function_body");
 		
 		if (
 			r0 != null
 			&& r0.getToken().getTokenType() == TokenTypeEnum.LFBRACE
-			&& r1 != null
-			&& r1.getToken().getTokenType() == TokenTypeEnum.RFBRACE
 		) {
-			return new Return(r0.getStart(), r1.getStop(), r1.getNext(), new AST("function_body"));
-		} else {
-			return new Return(base, base, base, new AST(""));
-		}
+			int next = r0.getNext();
+			
+			Return expressionReturn = parseExpression(next);
+			
+			if (expressionReturn!=null) {
+				while(expressionReturn.getStop() != expressionReturn.getNext()) {
+					if (
+						expressionReturn.getStop() != expressionReturn.getNext()
+					) {
+						ast.addChild(expressionReturn.getAst());
+					}
+
+					next = expressionReturn.getNext();
+				}
+			}
+			
+			Return r1 = look(next, 0);
+			
+			if (
+				r1 != null
+				&& r1.getToken().getTokenType() == TokenTypeEnum.RFBRACE
+			) {
+				return new Return(r0.getStart(), r1.getStop(), r1.getNext(), ast);
+			}
+			
+		} 
+		
+		return null;
 	}
 	
 	/**
@@ -295,17 +342,250 @@ public class Parser {
 	 */
 	public Return parseAssign(int base) {
 		Return r1 = look(base, 0);
-		Return r2 = look(base, 1);
-		Return r3 = look(base, 2);
+		
+		if (
+			r1 != null
+			&& r1.getToken() != null
+			&& r1.getToken().getTokenType() == TokenTypeEnum.ATOM
+		) {
+			Return r2 = look(base, 1);
+			
+			if (
+				r2 != null
+				&& r2.getToken() != null
+				&& r2.getToken().getTokenType() == TokenTypeEnum.ASSIGN
+			) {
+				Return r3 = parseExpr(r2.getNext());
+				
+				if (r3 != null) {
+					AST ast = new AST("assign");
+					
+					ast.addChild(r3.getAst());
+					
+					return new Return(r1.getStart(), r3.getStop(), r3.getNext(), ast);
+				}
+			}
+		}
 		
 		return null;
 	}
 	
+	/*
+	 * function_call = ATOM LBRACE statement? RBRACE | ATOM LBRACE statement? (COMMA statement?)* RBRACE
+	 */
 	public Return parseFunctionCall(int base) {
+		Return r0 = look(base, 0);
+		Return r1 = look(base, 1);
+		
+		AST ast = new AST("function_call");
+		
+		if (
+			r0 != null
+			&& r0.getToken() != null
+			&& r0.getToken().getTokenType() == TokenTypeEnum.ATOM
+			&& r1 != null
+			&& r1.getToken() != null
+			&& r1.getToken().getTokenType() == TokenTypeEnum.LBRACE
+		) {
+			ast.addChild(new AST(r0.getToken().getText()));
+			
+			int next = r1.getNext();
+			
+			Return returnStatement = parseStatement(next);
+			
+			AST paramsAst = new AST("params");
+			
+			if (returnStatement!=null) {
+				paramsAst.addChild(returnStatement.getAst());
+				
+				next = returnStatement.getNext();
+				
+				boolean fl = true;
+				
+				while (fl) {
+					fl = false;
+					
+					Return commaReturn=look(next, 0);
+					
+					if (
+						commaReturn!=null
+						&& commaReturn.getToken() != null
+						&& commaReturn.getToken().getTokenType() == TokenTypeEnum.COMMA
+					) {
+						Return nParamStatement = parseStatement(commaReturn.getNext());
+						
+						if (nParamStatement != null) {
+							fl = true;
+							next = nParamStatement.getNext();
+							
+							paramsAst.addChild(nParamStatement.getAst());
+						}
+					}
+				}
+			}
+			
+			ast.addChild(paramsAst);
+			
+			Return r2 = look(next, 0);
+			
+			if (
+				r2 != null
+				&& r2.getToken() != null
+				&& r2.getToken().getTokenType() == TokenTypeEnum.RBRACE
+			) {
+				return new Return(r0.getStart(), r2.getStop(), r2.getNext(), ast);
+			}
+		}
+		
 		return null;
 	}
 	
+	/*
+	 * expr = NUMBER | variable | variable INCREMENT | STRING | MACRO
+	 */
 	public Return parseExpr(int base) {
+		AST ast = new AST("expr");
+		
+		Return r0 = look(base, 0);
+		Return r1 = look(base, 1);
+		
+		if (
+			r0 != null
+			&& r0.getToken() != null
+		) {
+			AST childAst = null;
+			
+			int stop = r0.getStop();
+			int next = r0.getNext();
+			
+			boolean checkVariable = false;
+			
+			switch (r0.getToken().getTokenType()) {
+				case STRING:
+					childAst = new AST("string");
+					childAst.addChild(new AST(r0.getToken().getText()));
+					break;
+				case NUMBER:
+					childAst = new AST("number");
+					childAst.addChild(new AST(r0.getToken().getText()));
+					break;
+				case MACRO:
+					childAst = new AST("macro");
+					childAst.addChild(new AST(r0.getToken().getText()));
+					break;
+				default:
+					checkVariable = true;
+			}
+			
+			// check variable
+			if (checkVariable) {
+				Return var = parseVariable(base);
+				
+				if (var != null) {
+					if (
+						r1 != null
+						&& r1.getToken() != null
+						&& r1.getToken().getTokenType() == TokenTypeEnum.INCREMENT
+					) {
+						next = r1.getNext();
+						stop = r1.getStop();
+						
+						childAst = new AST("increment");
+						childAst.addChild(var.getAst());
+					} else {
+						childAst = var.getAst();
+					}
+				}
+			}
+			
+			
+			if (childAst != null) {
+				ast.addChild(childAst);
+				
+				return new Return(r0.getStart(), stop, next, ast);
+			}
+		}
+		
+		return null;
+	}
+	
+	/*
+	 * variable = ATOM {IF ATOM.text IN global.variables}
+	 */
+	public Return parseVariable(int base) {
+		AST ast = new AST("variable");
+		
+		Return r0 = look(base, 0);
+		
+		if (
+			r0 != null
+			&& r0.getToken() != null
+			&& r0.getToken().getTokenType() == TokenTypeEnum.ATOM
+		) {
+			ast.addChild(new AST(r0.getToken().getText()));
+			
+			return new Return(r0.getStart(), r0.getStop(), r0.getNext(), ast);
+		}
+		
+		return null;
+	}
+	
+	/*
+	 * event_declaration = KW_BEGIN? LFBRACE expression* RFBRACE
+	 */
+	public Return parseEventDeclaration(int base) {
+		AST ast = new AST("event_declaration");
+		
+		Return r0 = look(base,0);
+		
+		int next = base;
+		
+		if (
+			r0 != null
+			&& r0.getToken() != null
+			&& r0.getToken().getTokenType() == TokenTypeEnum.KW_BEGIN
+		) {
+			next = r0.getNext();
+			
+			ast.addChild(new AST("begin"));
+		} else {
+			ast.addChild(new AST("each"));
+		}
+		
+		Return r1 = look(next,0);
+		
+		if (
+			r1 != null
+			&& r1.getToken() != null
+			&& r1.getToken().getTokenType() == TokenTypeEnum.LFBRACE
+		) {
+			next = r1.getNext();
+			
+			AST bodyAst = new AST("body");
+			
+			// parse expressions
+			Return exprReturn = parseExpression(next);
+			if (exprReturn!=null) {
+				do {
+					bodyAst.addChild(exprReturn.getAst());
+					next = exprReturn.getNext();
+					exprReturn = parseExpression(next);
+				} while (exprReturn!=null);
+			}
+			
+			ast.addChild(bodyAst);
+			
+			Return r2 = look(next,0);
+			
+			if (
+				r2 != null
+				&& r2.getToken() != null
+				&& r2.getToken().getTokenType() == TokenTypeEnum.RFBRACE
+			) {
+				return new Return(base, r2.getStop(), r2.getNext(), ast);
+			}
+		}
+		
 		return null;
 	}
 	

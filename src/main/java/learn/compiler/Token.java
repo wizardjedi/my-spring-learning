@@ -13,12 +13,20 @@ public class Token {
 		return new Token(TokenTypeEnum.ATOM, text);
 	}
 	
-	static Token SEMICOLON(String text) {
+	public static Token SEMICOLON(String text) {
 		return new Token(TokenTypeEnum.SEMICOLON, text);
 	}
 	
 	public static Token STRING(String text) {
 		return new Token(TokenTypeEnum.STRING, text);
+	}
+	
+	public static Token MACRO(String text) {
+		return new Token(TokenTypeEnum.MACRO, text);
+	}
+	
+	public static Token INCREMENT(String text) {
+		return new Token(TokenTypeEnum.INCREMENT, text);
 	}
 	
 	public static Token COMMA(String text) {
@@ -43,6 +51,10 @@ public class Token {
 	
 	public static Token RFBRACE(String text) {
 		return new Token(TokenTypeEnum.RFBRACE, text);
+	}
+	
+	public static Token NUMBER(String text) {
+		return new Token(TokenTypeEnum.NUMBER, text);
 	}
 	
 	public Token(){

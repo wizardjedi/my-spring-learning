@@ -159,4 +159,112 @@ public class ParserTest extends TestCase {
 		
 		assertEquals(exp.toString(), ast.toString());
 	}
+	
+	public void testNumberExpr(){
+		Token[] tokens = new Token[]{
+			Token.NUMBER("123")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpr(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("expr");
+		AST num = new AST("number");
+		exp.addChild(num);
+		num.addChild(new AST("123"));
+		
+		assertEquals(exp.toString(), ast.toString());
+	}
+	
+	public void testStringExpr(){
+		Token[] tokens = new Token[]{
+			Token.STRING("testString")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpr(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("expr");
+		AST num = new AST("string");
+		exp.addChild(num);
+		num.addChild(new AST("testString"));
+		
+		assertEquals(exp.toString(), ast.toString());
+	}
+	
+	public void testMacroExpr(){
+		Token[] tokens = new Token[]{
+			Token.MACRO("__LINE__")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpr(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("expr");
+		AST num = new AST("macro");
+		exp.addChild(num);
+		num.addChild(new AST("__LINE__"));
+		
+		assertEquals(exp.toString(), ast.toString());
+	}
+	
+	public void testVariableExpr(){
+		Token[] tokens = new Token[]{
+			Token.ATOM("var123")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpr(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("expr");
+		AST num = new AST("variable");
+		exp.addChild(num);
+		num.addChild(new AST("var123"));
+		
+		assertEquals(exp.toString(), ast.toString());
+	}
+	
+	public void testVariableIncrementExpr(){
+		Token[] tokens = new Token[]{
+			Token.ATOM("var123"),
+			Token.INCREMENT("++")
+		};
+		
+		List<Token> list = Arrays.asList(tokens);
+		
+		Parser p = new Parser(list);
+		
+		Parser.Return r = p.parseExpr(0);
+
+		AST ast = r.getAst();
+		
+		AST exp = new AST("expr");
+		AST inc = new AST("increment");
+		exp.addChild(inc);
+		AST num = new AST("variable");
+		num.addChild(new AST("var123"));
+		inc.addChild(num);
+		
+		assertEquals(exp.toString(), ast.toString());
+	}
 }
