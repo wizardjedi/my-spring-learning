@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+">
+	<bean id="service" class="learn.sprofile.ServiceImpl">
+		<property name="dao" ref="daoBean" />
+		<property name="request" ref="httpRequester" />
+	</bean>
+
+	<beans profile="production">
+		<bean id="httpRequester" class="learn.sprofile.HttpCryptoRequester" />
+	</beans>
+
+	<beans profile="test">
+		<bean id="httpRequester" class="learn.sprofile.HttpFakeRequester" />
+	</beans>
+
+	<beans profile="devel,default">
+		<bean id="httpRequester" class="learn.sprofile.HttpPlainRequester" />
+	</beans>
+
+	<beans profile="postgresql,default">
+		<bean id="daoBean" class="learn.sprofile.PostgresqlDAO" />
+	</beans>
+
+	<beans profile="mysql">
+		<bean id="daoBean" class="learn.sprofile.MySQLDAO" />
+	</beans>
+</beans>
