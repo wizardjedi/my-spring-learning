@@ -6,13 +6,13 @@ Part 0.7 Spring profiles
  * профили источников данных (`mysql`,`postgresql`)
  * профили для развёртывания (`test`,`devel`,`production`)
 
-= Сборка проекта =
+*Сборка проекта*
 
 ```
 $ mvn clean install
 ```
 
-= Запуск приложения =
+*Запуск приложения*
 
 Для запуска по умолчанию: devel профиль и postgresql
 
