@@ -1,16 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package a1s.learn.guava;
 
 import com.google.common.util.concurrent.RateLimiter;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import junit.framework.TestCase;
-
 
 public class RateLimiterTest extends TestCase {
 	public volatile Integer count = 0;
@@ -31,7 +24,7 @@ public class RateLimiterTest extends TestCase {
 		try {
 			Thread.sleep(1500);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(RateLimiterTest.class.getName()).log(Level.SEVERE, null, ex);
+			fail();
 		}
 		
 		sync.stop=true;
