@@ -1,5 +1,3 @@
-# Base Twitter cloud hopper application
+# Simple Twitter cloud hopper application
 
-Added cloud hopper dependencies.
-
-You have to change pom.xml to set up prefered namespace and project name.
+This application can only connect to local SMPP server and send single SUBMIT_SM with Russian text
