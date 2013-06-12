@@ -7,6 +7,7 @@ import com.cloudhopper.smpp.SmppSessionConfiguration;
 import com.cloudhopper.smpp.impl.DefaultSmppClient;
 import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.type.Address;
+import com.cloudhopper.smpp.type.LoggingOptions;
 import com.cloudhopper.smpp.type.RecoverablePduException;
 import com.cloudhopper.smpp.type.SmppBindException;
 import com.cloudhopper.smpp.type.SmppChannelException;
@@ -14,10 +15,12 @@ import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class App {
+	public static Logger log = LoggerFactory.getLogger(App.class);
+
 	public static void main(String[] args) {
 		DefaultSmppClient client = new DefaultSmppClient();
 
@@ -29,43 +32,50 @@ public class App {
 		sessionConfig.setSystemId("smppclient1");
 		sessionConfig.setPassword("password");
 
+		LoggingOptions loggingOptions = new LoggingOptions();
+
+		loggingOptions.setLogPdu(false);
+		loggingOptions.setLogBytes(false);
+
+		sessionConfig.setLoggingOptions(loggingOptions);
+
 		try {
-			SmppSession session = client.bind(sessionConfig);
+			SmppSession session = client.bind(sessionConfig, new MySmppSessionHandler());
 
 			SubmitSm sm = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
 
-			System.out.println("Try to send message");
+			log.debug("Try to send message");
 
 			session.submit(sm, TimeUnit.SECONDS.toMillis(60));
 
-			System.out.println("Message sent");
+			log.debug("Message sent");
 
-			System.out.println("Wait 10 seconds");
+			log.debug("Wait 10 seconds");
 
 			TimeUnit.SECONDS.sleep(10);
 
-			System.out.println("Destroy session");
+			log.debug("Destroy session");
 
 			session.close();
 			session.destroy();
 
-			System.out.println("Destroy client");
+			log.debug("Destroy client");
 
 			client.destroy();
 
-			System.out.println("Bye!");
+			log.debug("Bye!");
 		} catch (SmppTimeoutException ex) {
-			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			log.error("{}", ex);
 		} catch (SmppChannelException ex) {
-			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			log.error("{}", ex);
 		} catch (SmppBindException ex) {
-			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			log.error("{}", ex);
 		} catch (UnrecoverablePduException ex) {
-			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			log.error("{}", ex);
 		} catch (InterruptedException ex) {
-			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			log.error("{}", ex);
 		} catch (RecoverablePduException ex) {
-			Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			log.error("{}", ex);
 		}
 	}
 
@@ -87,6 +97,9 @@ public class App {
 
 		// Encode text
 		sm.setShortMessage(CharsetUtil.encode(text, charset));
+
+		//We would like to get delivery receipt
+		sm.setRegisteredDelivery((byte)1);
 
 		return sm;
 	}
