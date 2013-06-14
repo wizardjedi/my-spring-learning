@@ -6,6 +6,7 @@ import com.cloudhopper.smpp.SmppBindType;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.SmppSessionConfiguration;
 import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import com.cloudhopper.smpp.pdu.EnquireLink;
 import com.cloudhopper.smpp.pdu.PduRequest;
 import com.cloudhopper.smpp.pdu.PduResponse;
 import com.cloudhopper.smpp.pdu.SubmitSm;
@@ -18,7 +19,10 @@ import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +54,14 @@ public class App {
 
 		sessionConfig.setLoggingOptions(loggingOptions);
 
+		Timer timer = new Timer();
+
 		try {
 			SmppSession session = client.bind(sessionConfig, new MySmppSessionHandler());
+
+			long period = TimeUnit.SECONDS.toMillis(1);
+
+			timer.scheduleAtFixedRate(new ElinkTask(session), period, period);
 
 			SubmitSm sm1 = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
 
@@ -130,5 +140,33 @@ public class App {
 		sm.setRegisteredDelivery((byte)1);
 
 		return sm;
+	}
+
+	public static class ElinkTask extends TimerTask {
+		public static Logger log = LoggerFactory.getLogger(ElinkTask.class);
+
+		protected SmppSession session;
+
+		public ElinkTask(SmppSession session) {
+			this.session = session;
+		}
+
+		@Override
+		public void run() {
+			try {
+				log.debug("Send Elink...");
+				session.enquireLink(new EnquireLink(), TimeUnit.SECONDS.toMillis(5));
+			} catch (RecoverablePduException ex) {
+				log.error("{}", ex);
+			} catch (UnrecoverablePduException ex) {
+				log.error("{}", ex);
+			} catch (SmppTimeoutException ex) {
+				log.error("No elink in period. Need to reconnect. {}", ex);
+			} catch (SmppChannelException ex) {
+				log.error("{}", ex);
+			} catch (InterruptedException ex) {
+				log.error("{}", ex);
+			}
+		}
 	}
 }
