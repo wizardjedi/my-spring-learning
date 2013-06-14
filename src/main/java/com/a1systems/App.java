@@ -1,11 +1,15 @@
 package com.a1systems;
 
 import com.cloudhopper.commons.charset.CharsetUtil;
+import com.cloudhopper.commons.util.windowing.WindowFuture;
 import com.cloudhopper.smpp.SmppBindType;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.SmppSessionConfiguration;
 import com.cloudhopper.smpp.impl.DefaultSmppClient;
+import com.cloudhopper.smpp.pdu.PduRequest;
+import com.cloudhopper.smpp.pdu.PduResponse;
 import com.cloudhopper.smpp.pdu.SubmitSm;
+import com.cloudhopper.smpp.pdu.SubmitSmResp;
 import com.cloudhopper.smpp.type.Address;
 import com.cloudhopper.smpp.type.LoggingOptions;
 import com.cloudhopper.smpp.type.RecoverablePduException;
@@ -44,11 +48,37 @@ public class App {
 
 			SubmitSm sm = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
 
-			log.debug("Try to send message");
+			log.debug("Try to send message 1");
 
-			session.submit(sm, TimeUnit.SECONDS.toMillis(60));
+			SubmitSmResp ssmr = session.submit(sm, TimeUnit.SECONDS.toMillis(60));
 
-			log.debug("Message sent");
+			log.debug("Got response 1 {}", ssmr);
+
+			log.debug("Try to send message 2");
+
+			WindowFuture<Integer, PduRequest, PduResponse> future = session.sendRequestPdu(sm, TimeUnit.SECONDS.toMillis(60), true);
+
+			while (!future.isDone()) {
+				log.debug("Not done Succes is {}", future.isSuccess());
+			}
+
+			log.debug("Got response 2 {}", future.getResponse());
+
+			log.debug("Done Succes status is {}", future.isSuccess());
+			log.debug("Response time is {}", future.getAcceptToDoneTime());
+
+			log.debug("Try to send message 3");
+
+			WindowFuture<Integer, PduRequest, PduResponse> future2 = session.sendRequestPdu(sm, TimeUnit.SECONDS.toMillis(60), false);
+
+			while (!future2.isDone()) {
+				log.debug("Not done Succes is {}", future2.isSuccess());
+			}
+
+			log.debug("Got response 3 {}", future2.getResponse());
+
+			log.debug("Done Succes status is {}", future2.isSuccess());
+			log.debug("Response time is {}", future2.getAcceptToDoneTime());
 
 			log.debug("Wait 10 seconds");
 
