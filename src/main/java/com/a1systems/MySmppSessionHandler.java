@@ -6,6 +6,7 @@ import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
 import com.cloudhopper.smpp.pdu.DeliverSm;
 import com.cloudhopper.smpp.pdu.PduRequest;
 import com.cloudhopper.smpp.pdu.PduResponse;
+import com.cloudhopper.smpp.pdu.SubmitSm;
 import com.cloudhopper.smpp.pdu.SubmitSmResp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,9 @@ public class MySmppSessionHandler extends DefaultSmppSessionHandler {
 	@Override
 	public void fireExpectedPduResponseReceived(PduAsyncResponse pduAsyncResponse) {
 		if (pduAsyncResponse.getResponse().getClass() == SubmitSmResp.class) {
+			SubmitSm req = (SubmitSm)pduAsyncResponse.getRequest();
+			log.debug("Got response for APPID={}", req.getReferenceObject());
+
 			SubmitSmResp ssmr = (SubmitSmResp)pduAsyncResponse.getResponse();
 
 			log.debug("Got response with MSG ID={} for seqnum={}", ssmr.getMessageId(), ssmr.getSequenceNumber());

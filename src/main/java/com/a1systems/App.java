@@ -25,6 +25,13 @@ import org.slf4j.LoggerFactory;
 public class App {
 	public static Logger log = LoggerFactory.getLogger(App.class);
 
+	private static void log(WindowFuture<Integer, PduRequest, PduResponse> future) {
+		SubmitSm req = (SubmitSm)future.getRequest();
+		SubmitSmResp resp = (SubmitSmResp)future.getResponse();
+
+		log.debug("Got response with MSG ID={} for APPID={}", resp.getMessageId(), req.getReferenceObject());
+	}
+
 	public static void main(String[] args) {
 		DefaultSmppClient client = new DefaultSmppClient();
 
@@ -46,39 +53,29 @@ public class App {
 		try {
 			SmppSession session = client.bind(sessionConfig, new MySmppSessionHandler());
 
-			SubmitSm sm = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
+			SubmitSm sm1 = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
 
-			log.debug("Try to send message 1");
+			log.debug("Try to send message");
 
-			SubmitSmResp ssmr = session.submit(sm, TimeUnit.SECONDS.toMillis(60));
+			sm1.setReferenceObject("Hello1");
 
-			log.debug("Got response 1 {}", ssmr);
+			WindowFuture<Integer, PduRequest, PduResponse> future = session.sendRequestPdu(sm1, TimeUnit.SECONDS.toMillis(60), false);
 
-			log.debug("Try to send message 2");
+			SubmitSm sm2 = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
 
-			WindowFuture<Integer, PduRequest, PduResponse> future = session.sendRequestPdu(sm, TimeUnit.SECONDS.toMillis(60), true);
+			sm2.setReferenceObject("Hello2");
 
-			while (!future.isDone()) {
-				log.debug("Not done Succes is {}", future.isSuccess());
+			WindowFuture<Integer, PduRequest, PduResponse> future2 = session.sendRequestPdu(sm2, TimeUnit.SECONDS.toMillis(60), false);
+
+			while (
+				!future2.isDone()
+				|| !future.isDone()
+			) {
+				log.debug("Not done");
 			}
 
-			log.debug("Got response 2 {}", future.getResponse());
-
-			log.debug("Done Succes status is {}", future.isSuccess());
-			log.debug("Response time is {}", future.getAcceptToDoneTime());
-
-			log.debug("Try to send message 3");
-
-			WindowFuture<Integer, PduRequest, PduResponse> future2 = session.sendRequestPdu(sm, TimeUnit.SECONDS.toMillis(60), false);
-
-			while (!future2.isDone()) {
-				log.debug("Not done Succes is {}", future2.isSuccess());
-			}
-
-			log.debug("Got response 3 {}", future2.getResponse());
-
-			log.debug("Done Succes status is {}", future2.isSuccess());
-			log.debug("Response time is {}", future2.getAcceptToDoneTime());
+			log(future);
+			log(future2);
 
 			log.debug("Wait 10 seconds");
 
@@ -108,6 +105,7 @@ public class App {
 			log.error("{}", ex);
 		}
 	}
+
 
 	public static SubmitSm createSubmitSm(String src, String dst, String text, String charset) throws SmppInvalidArgumentException {
 		SubmitSm sm = new SubmitSm();
