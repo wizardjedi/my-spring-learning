@@ -1,5 +1,6 @@
 package com.a1systems;
 
+import com.a1systems.client.Client;
 import com.cloudhopper.commons.charset.CharsetUtil;
 import com.cloudhopper.commons.util.windowing.WindowFuture;
 import com.cloudhopper.smpp.SmppBindType;
@@ -19,8 +20,11 @@ import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppInvalidArgumentException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
+import com.cloudhopper.smpp.util.PduUtil;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import org.slf4j.Logger;
@@ -36,8 +40,8 @@ public class App {
 		log.debug("Got response with MSG ID={} for APPID={}", resp.getMessageId(), req.getReferenceObject());
 	}
 
-	public static void main(String[] args) {
-		DefaultSmppClient client = new DefaultSmppClient();
+	public static void main(String[] args) throws SmppInvalidArgumentException {
+		ApplicationContext ctx = new GenericXmlApplicationContext("spring.xml");
 
 		SmppSessionConfiguration sessionConfig = new SmppSessionConfiguration();
 
@@ -49,124 +53,77 @@ public class App {
 
 		LoggingOptions loggingOptions = new LoggingOptions();
 
-		loggingOptions.setLogPdu(false);
-		loggingOptions.setLogBytes(false);
+		//loggingOptions.setLogPdu(false);
+		//loggingOptions.setLogBytes(false);
 
 		sessionConfig.setLoggingOptions(loggingOptions);
 
-		Timer timer = new Timer();
+		Client client = new Client(sessionConfig);
 
-		try {
-			SmppSession session = client.bind(sessionConfig, new MySmppSessionHandler());
+		client.setSessionHandler(new MySmppSessionHandler(client));
 
-			long period = TimeUnit.SECONDS.toMillis(1);
+		ExecutorService pool = Executors.newFixedThreadPool(2);
 
-			timer.scheduleAtFixedRate(new ElinkTask(session), period, period);
+		pool.submit(client);
 
-			SubmitSm sm1 = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
+		client.start();
 
-			log.debug("Try to send message");
+		log.debug("Wait to bound");
 
-			sm1.setReferenceObject("Hello1");
+		while (
+			client.getSession() == null
+			|| !client.getSession().isBound()
+		) {
 
-			WindowFuture<Integer, PduRequest, PduResponse> future = session.sendRequestPdu(sm1, TimeUnit.SECONDS.toMillis(60), false);
-
-			SubmitSm sm2 = createSubmitSm("Test", "79111234567", "Привет землянин!", "UCS-2");
-
-			sm2.setReferenceObject("Hello2");
-
-			WindowFuture<Integer, PduRequest, PduResponse> future2 = session.sendRequestPdu(sm2, TimeUnit.SECONDS.toMillis(60), false);
-
-			while (
-				!future2.isDone()
-				|| !future.isDone()
-			) {
-				log.debug("Not done");
+			if (client.getSession() != null) {
+				log.debug("Session is {}", client.getSession().isBound());
+			} else {
+				log.debug("Null session");
 			}
 
-			log(future);
-			log(future2);
-
-			log.debug("Wait 10 seconds");
-
-			TimeUnit.SECONDS.sleep(10);
-
-			log.debug("Destroy session");
-
-			session.close();
-			session.destroy();
-
-			log.debug("Destroy client");
-
-			client.destroy();
-
-			log.debug("Bye!");
-		} catch (SmppTimeoutException ex) {
-			log.error("{}", ex);
-		} catch (SmppChannelException ex) {
-			log.error("{}", ex);
-		} catch (SmppBindException ex) {
-			log.error("{}", ex);
-		} catch (UnrecoverablePduException ex) {
-			log.error("{}", ex);
-		} catch (InterruptedException ex) {
-			log.error("{}", ex);
-		} catch (RecoverablePduException ex) {
-			log.error("{}", ex);
+			try {
+				TimeUnit.SECONDS.sleep(1);
+			} catch (InterruptedException ex) {
+				java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+			}
 		}
-	}
 
+		log.debug("Try to send");
 
-	public static SubmitSm createSubmitSm(String src, String dst, String text, String charset) throws SmppInvalidArgumentException {
 		SubmitSm sm = new SubmitSm();
 
-		// For alpha numeric will use
-		// TON=5
-		// NPI=0
-		sm.setSourceAddress(new Address((byte)5, (byte)0, src));
+		sm.setSourceAddress(new Address((byte)5, (byte)0, "Test"));
+		sm.setDestAddress(new Address((byte)1, (byte)1, "79111234567"));
 
-		// For national numbers will use
-		// TON=1
-		// NPI=1
-		sm.setDestAddress(new Address((byte)1, (byte)1, dst));
+		sm.setShortMessage(CharsetUtil.encode("Привет!", "UCS-2"));
 
-		// Set datacoding to UCS-2
-		sm.setDataCoding((byte)8);
-
-		// Encode text
-		sm.setShortMessage(CharsetUtil.encode(text, charset));
-
-		//We would like to get delivery receipt
 		sm.setRegisteredDelivery((byte)1);
 
-		return sm;
-	}
+		sm.setDataCoding((byte)8);
 
-	public static class ElinkTask extends TimerTask {
-		public static Logger log = LoggerFactory.getLogger(ElinkTask.class);
 
-		protected SmppSession session;
 
-		public ElinkTask(SmppSession session) {
-			this.session = session;
+		try {
+			client.getSession().submit(sm, TimeUnit.SECONDS.toMillis(60));
+		} catch (RecoverablePduException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (UnrecoverablePduException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SmppTimeoutException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SmppChannelException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (InterruptedException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		try {
+			TimeUnit.SECONDS.sleep(30);
+		} catch (InterruptedException ex) {
+			java.util.logging.Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
 		}
 
-		@Override
-		public void run() {
-			try {
-				log.debug("Send Elink...");
-				session.enquireLink(new EnquireLink(), TimeUnit.SECONDS.toMillis(5));
-			} catch (RecoverablePduException ex) {
-				log.error("{}", ex);
-			} catch (UnrecoverablePduException ex) {
-				log.error("{}", ex);
-			} catch (SmppTimeoutException ex) {
-				log.error("No elink in period. Need to reconnect. {}", ex);
-			} catch (SmppChannelException ex) {
-				log.error("{}", ex);
-			} catch (InterruptedException ex) {
-				log.error("{}", ex);
-			}
-		}
+		client.stop();
+
+		pool.shutdown();
 	}
 }

@@ -1,5 +1,6 @@
 package com.a1systems;
 
+import com.a1systems.client.Client;
 import com.cloudhopper.smpp.PduAsyncResponse;
 import com.cloudhopper.smpp.SmppConstants;
 import com.cloudhopper.smpp.impl.DefaultSmppSessionHandler;
@@ -13,6 +14,12 @@ import org.slf4j.LoggerFactory;
 
 public class MySmppSessionHandler extends DefaultSmppSessionHandler {
 	public static Logger log = LoggerFactory.getLogger(MySmppSessionHandler.class);
+
+	protected Client client;
+
+	public MySmppSessionHandler(Client client) {
+		this.client = client;
+	}
 
 	@Override
 	public PduResponse firePduRequestReceived(PduRequest pduRequest) {
@@ -43,6 +50,11 @@ public class MySmppSessionHandler extends DefaultSmppSessionHandler {
 
 			log.debug("Got response with MSG ID={} for seqnum={}", ssmr.getMessageId(), ssmr.getSequenceNumber());
 		}
+	}
+
+	@Override
+	public void fireChannelUnexpectedlyClosed() {
+		client.bind();
 	}
 
 
