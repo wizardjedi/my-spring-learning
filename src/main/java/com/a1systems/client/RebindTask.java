@@ -6,11 +6,10 @@ import com.cloudhopper.smpp.type.SmppBindException;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
-import java.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RebindTask extends TimerTask {
+public class RebindTask implements  Runnable {
 
 	public static final Logger log = LoggerFactory.getLogger(RebindTask.class);
 

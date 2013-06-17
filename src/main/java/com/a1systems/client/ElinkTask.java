@@ -1,17 +1,15 @@
 package com.a1systems.client;
 
-import static com.a1systems.client.RebindTask.log;
 import com.cloudhopper.smpp.SmppSession;
 import com.cloudhopper.smpp.pdu.EnquireLink;
 import com.cloudhopper.smpp.type.RecoverablePduException;
 import com.cloudhopper.smpp.type.SmppChannelException;
 import com.cloudhopper.smpp.type.SmppTimeoutException;
 import com.cloudhopper.smpp.type.UnrecoverablePduException;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.LoggerFactory;
 
-public class ElinkTask extends TimerTask {
+public class ElinkTask implements Runnable {
 	public static final org.slf4j.Logger log = LoggerFactory.getLogger(ElinkTask.class);
 
 	protected Client client;

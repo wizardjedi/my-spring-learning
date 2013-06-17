@@ -41,8 +41,6 @@ public class App {
 	}
 
 	public static void main(String[] args) throws SmppInvalidArgumentException {
-		ApplicationContext ctx = new GenericXmlApplicationContext("spring.xml");
-
 		SmppSessionConfiguration sessionConfig = new SmppSessionConfiguration();
 
 		sessionConfig.setType(SmppBindType.TRANSCEIVER);

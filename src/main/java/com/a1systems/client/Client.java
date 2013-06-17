@@ -6,6 +6,9 @@ import com.cloudhopper.smpp.SmppSessionConfiguration;
 import com.cloudhopper.smpp.SmppSessionHandler;
 import com.cloudhopper.smpp.impl.DefaultSmppClient;
 import java.util.Timer;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,19 +24,18 @@ public class Client implements Runnable {
 
 	protected SmppClient smppClient;
 
-	protected Timer timer;
+	protected ScheduledExecutorService timer;
 
-	protected ElinkTask elinkTask;
-	protected RebindTask rebindTask;
+	protected ScheduledFuture<?> elinkTask;
+	protected ScheduledFuture<?> rebindTask;
 
-	protected long rebindPeriod = TimeUnit.SECONDS.toMillis(5);
-	protected long elinkPeriod = TimeUnit.SECONDS.toMillis(5);
+	protected long rebindPeriod = 5;
+	protected long elinkPeriod = 5;
 
 	public Client(SmppSessionConfiguration cfg) {
 		this.cfg = cfg;
 
-		this.elinkTask = new ElinkTask(this);
-		this.rebindTask = new RebindTask(this);
+		this.timer = Executors.newScheduledThreadPool(2);
 	}
 
 	@Override
@@ -58,23 +60,17 @@ public class Client implements Runnable {
 	public void start() {
 		log.debug("Starting client");
 
-		this.timer = new Timer();
-
 		this.smppClient = new DefaultSmppClient();
 
 		this.bind();
 	}
 
 	private void runRebindTask() {
-		rebindTask = new RebindTask(this);
-
-		this.timer.scheduleAtFixedRate(rebindTask, 0, getRebindPeriod());
+		this.rebindTask = this.timer.scheduleAtFixedRate(new RebindTask(this), 0, getRebindPeriod(), TimeUnit.SECONDS);
 	}
 
 	private void runElinkTask() {
-		elinkTask = new ElinkTask(this);
-
-		this.timer.scheduleAtFixedRate(elinkTask, getElinkPeriod(), getElinkPeriod());
+		this.elinkTask = this.timer.scheduleAtFixedRate(new ElinkTask(this), getElinkPeriod(), getElinkPeriod(), TimeUnit.SECONDS);
 	}
 
 
@@ -95,7 +91,9 @@ public class Client implements Runnable {
 
 			this.state = ClientState.BINDING;
 
-			this.elinkTask.cancel();
+			if (elinkTask != null) {
+				this.elinkTask.cancel(true);
+			}
 			runRebindTask();
 		}
 	}
@@ -108,7 +106,9 @@ public class Client implements Runnable {
 
 			this.session = session;
 
-			this.rebindTask.cancel();
+			if (rebindTask!=null) {
+				this.rebindTask.cancel(true);
+			}
 			runElinkTask();
 		}
 	}
@@ -118,10 +118,9 @@ public class Client implements Runnable {
 
 		this.state = ClientState.STOPPING;
 
-		this.elinkTask.cancel();
-		this.rebindTask.cancel();
-		this.timer.cancel();
-		this.timer.purge();
+		this.elinkTask.cancel(true);
+		this.rebindTask.cancel(true);
+		this.timer.shutdown();
 
 		this.timer = null;
 	}
