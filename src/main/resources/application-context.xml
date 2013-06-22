@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd"
+>
+	<bean id="server" class="org.eclipse.jetty.server.Server" init-method="start" destroy-method="stop">
+		<property name="connectors">
+			<list>
+				<bean id="connector" class="org.eclipse.jetty.server.nio.NetworkTrafficSelectChannelConnector">
+					<constructor-arg name="server" ref="server" />
+					<property name="port" value="9090" />
+					<property name="idleTimeout" value="1000" />
+				</bean>
+			</list>
+		</property>
+		<property name="handler">
+			<bean id="handlers" class="org.eclipse.jetty.server.handler.HandlerCollection">
+				<property name="handlers">
+					<list>
+						<bean id="contexts" class="org.eclipse.jetty.server.handler.ContextHandlerCollection">
+							<property name="handlers">
+								<list>
+									<bean class="org.eclipse.jetty.webapp.WebAppContext">
+										<property name="contextPath" value="/"/>
+										<property name="resourceBase" value="#{T(java.lang.Thread).currentThread().getContextClassLoader().getResource('webapp').toExternalForm()}"/>
+									</bean>
+								</list>
+							</property>
+						</bean>
+					</list>
+				</property>
+			</bean>
+		</property>
+	</bean>
+</beans>

@@ -7,12 +7,13 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.nio.NetworkTrafficSelectChannelConnector;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
 
 public class App
 {
     public static void main( String[] args ) throws Exception
     {
-        Server server = new Server();
+       /* Server server = new Server();
 
 		NetworkTrafficSelectChannelConnector connector = new NetworkTrafficSelectChannelConnector(server);
 		connector.setPort(9090);
@@ -44,6 +45,8 @@ public class App
 
 		// Run jetty
 		server.start();
-		server.join();
+		server.join();*/
+
+		GenericXmlApplicationContext ctx = new GenericXmlApplicationContext("application-context.xml");
     }
 }
