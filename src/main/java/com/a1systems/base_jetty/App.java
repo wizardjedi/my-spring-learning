@@ -1,5 +1,6 @@
 package com.a1systems.base_jetty;
 
+import java.util.concurrent.TimeUnit;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
@@ -22,6 +23,7 @@ public class App
 		// setup web app
 		WebAppContext webAppContext = new WebAppContext();
 		webAppContext.setContextPath("/");
+
 		webAppContext
 				.setResourceBase(
 					Thread
