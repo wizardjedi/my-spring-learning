@@ -1,3 +1,3 @@
 # Embedded Jetty Base application
 
-This branch uses only for dependency setup
+Creating base Jetty server for port 9090 programmaticaly.
