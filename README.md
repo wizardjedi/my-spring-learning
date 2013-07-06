@@ -1,1 +1,1 @@
-Part 0.1
+Check out Wiki of this repo :) enjoy
