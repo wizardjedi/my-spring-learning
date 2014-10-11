@@ -1,1 +1,1 @@
-Check out branches and wiki for this repo :)
+Initial repo and example for akka experiments
