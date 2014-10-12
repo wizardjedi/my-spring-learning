@@ -2,7 +2,10 @@ package learn.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
+import akka.actor.PoisonPill;
 import akka.actor.Props;
+import akka.dispatch.sysmsg.Recreate;
+import akka.dispatch.sysmsg.Terminate;
 import java.util.concurrent.TimeUnit;
 
 public class App {
@@ -19,6 +22,10 @@ public class App {
         System.out.println("Actor created");
 
         actor.tell("Hello", ActorRef.noSender());
+
+        System.out.println("Send poison pill");
+
+        actor.tell(PoisonPill.getInstance(), ActorRef.noSender());
 
         System.out.println("Wait 2 seconds");
 
