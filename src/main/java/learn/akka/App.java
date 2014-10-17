@@ -2,52 +2,64 @@ package learn.akka;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
-import akka.actor.PoisonPill;
+import akka.actor.DeadLetter;
 import akka.actor.Props;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import java.util.concurrent.TimeUnit;
 
 public class App {
-
     public static void main(String[] args) throws InterruptedException {
-        System.out.println("Actor system create");
+        Config config = ConfigFactory.parseString("akka.log-dead-letters = off");
 
-        ActorSystem system = ActorSystem.create("system");
+        ActorSystem system = ActorSystem.create("system",config);
 
-        System.out.println("Actor system created");
+        ActorRef actorOf = system.actorOf(Props.create(MyActor.class),"actor");
 
-        ActorRef actor = system.actorOf(Props.create(SimpleActor.class));
+        system.eventStream().subscribe(actorOf, DeadLetter.class);
 
-        System.out.println("Actor created");
+        TimeUnit.SECONDS.sleep(1);
 
-        System.out.println("Wait 2 seconds");
+        actorOf.tell("born", ActorRef.noSender());
 
-        TimeUnit.SECONDS.sleep(2);
+        TimeUnit.MILLISECONDS.sleep(500);
 
-        System.out.println("Born child");
+        System.out.println("----Some message----");
 
-        actor.tell("Born", ActorRef.noSender());
+        System.out.println(" ! arith");TimeUnit.MILLISECONDS.sleep(1500);
 
-        System.out.println("Wait 2 seconds");
+        actorOf.tell("arith", ActorRef.noSender()); // resume
 
-        TimeUnit.SECONDS.sleep(2);
+        TimeUnit.MILLISECONDS.sleep(1500);
 
-        System.out.println("Kill child");
+        System.out.println(" ! null");TimeUnit.MILLISECONDS.sleep(1500);
 
-        actor.tell("Kill", ActorRef.noSender());
+        actorOf.tell("null", ActorRef.noSender()); // restart
 
-        System.out.println("Wait 2 seconds");
+        TimeUnit.MILLISECONDS.sleep(1500);
 
-        TimeUnit.SECONDS.sleep(2);
+        System.out.println(" ! illegal");TimeUnit.MILLISECONDS.sleep(500);
 
-        System.out.println("Send poison pill");
+        actorOf.tell("illegal", ActorRef.noSender()); // stop
 
-        actor.tell(PoisonPill.getInstance(), ActorRef.noSender());
+        TimeUnit.MILLISECONDS.sleep(1500);
 
-        TimeUnit.SECONDS.sleep(2);
+        System.out.println(" ! exception");TimeUnit.MILLISECONDS.sleep(500);
 
-        System.out.println("Shutting down");
+        actorOf.tell("exception", ActorRef.noSender()); // should invoke escalate, but actor is dead. msg send to dead lettes.
+
+        TimeUnit.MILLISECONDS.sleep(1500);
+
+        System.out.println(" ! another");TimeUnit.MILLISECONDS.sleep(500);
+
+        actorOf.tell("another", ActorRef.noSender()); // actor is dead. msg send to dead lettes.
+
+        TimeUnit.SECONDS.sleep(1);
+
+        System.out.println("Wait 3 and shutdown system");
+
+        TimeUnit.SECONDS.sleep(3);
 
         system.shutdown();
     }
-
 }
