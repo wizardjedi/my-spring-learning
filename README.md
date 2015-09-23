@@ -1,1 +1,1 @@
-Check out Wiki of this repo :) enjoy
+# Initial Spring batch project
