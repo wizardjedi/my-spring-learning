@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+		<resetJUL>true</resetJUL>
+	</contextListener>
+
+	<jmxConfigurator />
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%date{yyyy-MM-dd HH:mm:ss} %.-1level %logger %msg%n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="org.springframework" level="info" />
+
+	<root level="debug">
+		<appender-ref ref="console" />
+	</root>
+</configuration>
