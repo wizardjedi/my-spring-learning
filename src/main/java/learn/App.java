@@ -31,6 +31,8 @@ public class App {
         
         try {
             jobLauncher.run(job, jobParametersBuilder.toJobParameters());
+            jobLauncher.run(job, jobParametersBuilder.toJobParameters());
+            jobLauncher.run(job, jobParametersBuilder.toJobParameters());
         } catch (JobExecutionAlreadyRunningException e) {
             logger.error("Already running task",e);
         } catch (JobRestartException e) {

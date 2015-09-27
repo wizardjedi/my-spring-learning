@@ -72,6 +72,17 @@ public class Config {
                         public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
                             LoggerFactory.getLogger("echoLineTasklet").info("Hello from tasklet");
                             
+                            LoggerFactory
+                                    .getLogger(
+                                            "echoLineTasklet"
+                                    )
+                                    .info(
+                                        "Parameters: {}", 
+                                        chunkContext
+                                            .getStepContext()
+                                            .getJobParameters()
+                                    );
+                            
                             return RepeatStatus.FINISHED;
                         }
                     }
