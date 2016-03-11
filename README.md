@@ -1,1 +1,1 @@
-Check out branches and wiki for this repo :)
+# Branch for netty and mysql protocol experiments
