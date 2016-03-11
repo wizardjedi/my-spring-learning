@@ -1,1 +1,1 @@
-# Branch for netty and mysql protocol experiments
+# Simple netty server with mysql greeting from existing server

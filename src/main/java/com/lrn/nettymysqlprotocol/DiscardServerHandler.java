@@ -23,7 +23,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
 
         ByteBuf buffer = ctx.alloc().buffer();
 
-        ByteBuf writeBuffer = buffer.writeBytes("Hello\n".getBytes());
+        buffer.writeBytes(HexUtil.toByteArray("0700000200000002000000"));
 
         ctx.writeAndFlush(buffer);
 

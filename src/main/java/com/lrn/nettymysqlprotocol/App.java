@@ -32,11 +32,11 @@ public class App {
                     public void initChannel(SocketChannel ch) throws Exception {
                         logger.info("Client connected from:{}", ch.remoteAddress());
 
-                        ByteBuf greetingBuffer = ch.alloc().buffer();
+                        DefaultInitialHandshake handShake = new DefaultInitialHandshake();
 
-                        greetingBuffer.writeBytes("Greeting".getBytes());
+                        ByteBuf writePacket = handShake.writePacket(ch.alloc().buffer());
 
-                        ch.writeAndFlush(greetingBuffer);
+                        ch.writeAndFlush(writePacket);
 
                         ch.pipeline().addLast(new DiscardServerHandler());
                     }
