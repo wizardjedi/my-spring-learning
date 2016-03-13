@@ -3,6 +3,7 @@ package com.lrn.nettymysqlprotocol;
 import com.lrn.nettymysqlprotocol.protocol.CharacterSetEnum;
 import com.lrn.nettymysqlprotocol.protocol.InitialHandshake;
 import com.lrn.nettymysqlprotocol.protocol.ServerStatusEnum;
+import java.util.UUID;
 
 public class DefaultInitialHandshake extends InitialHandshake {
 
@@ -23,6 +24,6 @@ public class DefaultInitialHandshake extends InitialHandshake {
 
         this.characterSet = CharacterSetEnum.utf8_general_ci;
 
-        this.authPluginData = "e'1^hnqkHc<@jx=c])Q>";
+        this.authPluginData = UUID.randomUUID().toString();
     }
 }

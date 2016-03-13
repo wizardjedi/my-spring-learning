@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +30,12 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
 
         // Discard the received data silently.
         ((ByteBuf) msg).release(); // (3)
+        
+        ctx.pipeline().remove(this);
+        
+        ctx.pipeline().addFirst(new MysqlPacketToByteEncoder());
+        ctx.pipeline().addLast(new ByteToMysqlPacketDecoder());
+        ctx.pipeline().addLast(new MessageProcessor());
     }
 
     @Override

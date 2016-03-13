@@ -124,6 +124,83 @@ public class MysqlByteBufUtil {
         return value;
     }
 
+    public static long getLenencIntegerLength(long value) {
+        if (value < 251) {
+            return 1;
+        } else {
+            if (value >= 251 && value < 65536) {
+                return 3;
+            } else {
+                if (value >= 65536 && value < 16777216) {
+                    return 4;
+                } else {
+                    return 9;
+                }
+            }
+        }
+    }
+    
+    public static long getLenencStringLength(byte[] data) {
+        if (data == null) {
+			return 1;
+		} else {
+			if (data.length > 250) {
+				if(data.length>0xFFFFFF) {
+					return 4 + data.length;
+				} else if(data.length>0xFFFF) {
+					return 3 + data.length;
+				} else  {
+					return 2 + data.length;
+				}
+			} else {
+				return 1 + data.length;
+			}
+		}
+    }
+    
+    public static void writeLenencInteger(ByteBuf out, long value) {
+        if (value < 251) {
+            MysqlByteBufUtil.writeInt(out, value, 1);
+        } else {
+            if (value >= 251 && value < 65536) {
+                out.writeByte(0xFC);
+                MysqlByteBufUtil.writeInt(out, value, 2);
+            } else {
+                if (value >= 65536 && value < 16777216) {
+                    out.writeByte(0xFD);
+                    MysqlByteBufUtil.writeInt(out, value, 3);
+                } else {
+                    out.writeByte(0xFE);
+                    MysqlByteBufUtil.writeInt(out, value, 8);
+                }
+            }
+        }
+    }
+    
+    public static void writeLenencString(ByteBuf out, byte[] data) {
+        if (data == null) {
+			out.writeByte((byte) 251);
+		} else {
+			if (data.length > 250) {
+				if(data.length>0xFFFFFF) {
+					out.writeByte((byte)(254));
+                    MysqlByteBufUtil.writeInt(out, data.length, 4);
+					
+				} else if(data.length>0xFFFF) {
+					out.writeByte((byte)(253));
+                    MysqlByteBufUtil.writeInt(out, data.length, 3);                    
+				} else  {
+					out.writeByte((byte)(252));
+                    MysqlByteBufUtil.writeInt(out, data.length, 2);
+				}
+				out.writeBytes(data);
+			} else {
+				out.writeByte((byte) data.length);
+				out.writeBytes(data);
+			}
+		}
+    }
+    
     public static ServerCapabilitiesEnum[] longToServerCapabilities(long value) {
         int length = 0;
 

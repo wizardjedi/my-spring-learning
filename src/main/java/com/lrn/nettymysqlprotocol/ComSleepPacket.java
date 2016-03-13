@@ -1,9 +1,10 @@
-package com.lrn.nettymysqlprotocol.protocol;
+package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.BasePacket;
 import io.netty.buffer.ByteBuf;
 import java.io.UnsupportedEncodingException;
 
-public class ComQueryPacket extends BasePacket {
+class ComSleepPacket extends BasePacket {
 
     protected String query;
     
@@ -20,6 +21,8 @@ public class ComQueryPacket extends BasePacket {
     @Override
     public void readBody(ByteBuf byteBuf) {
         int queryLength = (int)(this.getLength() - 1);
+        
+        byteBuf.readBytes(3);
         
         byte[] stringBuffer = new byte[queryLength];
         
@@ -38,8 +41,5 @@ public class ComQueryPacket extends BasePacket {
 
     public void setQuery(String query) {
         this.query = query;
-    }
-    
-    
-    
+    }    
 }

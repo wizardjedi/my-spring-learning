@@ -39,9 +39,7 @@ public class App {
 
                         ch.writeAndFlush(writePacket);
 
-                        ch.attr(ServerAttributes.COMMANDKEY).set(MysqlCommandEnum.COM_LOGIN);
-                        
-                        ch.pipeline().addLast(new ByteToMysqlPacketDecoder());
+//                        ch.pipeline().addLast(new ByteToMysqlPacketDecoder());
                         ch.pipeline().addLast(new DiscardServerHandler());
                     }
 
