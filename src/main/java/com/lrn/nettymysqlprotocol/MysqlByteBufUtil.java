@@ -1,8 +1,11 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.CharacterSetEnum;
 import com.lrn.nettymysqlprotocol.protocol.ServerCapabilitiesEnum;
 import com.lrn.nettymysqlprotocol.protocol.ServerStatusEnum;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 
 
 public class MysqlByteBufUtil {
@@ -34,12 +37,61 @@ public class MysqlByteBufUtil {
         return buffer;
     }
 
+    public static long readInt1(ByteBuf buffer) {
+        return readInt(buffer, 1);
+    }
+    
+    public static long readInt2(ByteBuf buffer) {
+        return readInt(buffer, 2);
+    }
+    
+    public static long readInt3(ByteBuf buffer) {
+        return readInt(buffer, 3);
+    }
+    
+    public static long readInt4(ByteBuf buffer) {
+        return readInt(buffer, 4);
+    }
+    
+    public static long readInt(ByteBuf buffer, int size) {
+        long value = 0;
+        
+        for (int i=0;i<size;i++) {
+            long readedByte = buffer.readUnsignedByte();
+            
+            long newValue = readedByte << (8*i);
+            
+            value |= newValue;            
+        }
+        
+        return value;
+    }
+    
     public static ByteBuf writeString(ByteBuf buffer, String value) {
         buffer.writeBytes(value.getBytes());
 
         return buffer;
     }
 
+    public static byte[] readNullTerminatedString(ByteBuf bb) {
+        ByteBuf readBuffer = Unpooled.buffer();
+                
+        byte b;
+        do {
+            b = bb.readByte();
+            
+            if (b != 0x00) {
+                readBuffer.writeByte(b);
+            }
+        } while (b != 0x00);
+                
+        byte[] result = new byte[readBuffer.readableBytes()];
+        
+        readBuffer.readBytes(result);
+        
+        return result;
+    }
+    
     public static ByteBuf writeNullTerminatedString(ByteBuf buffer, String value) {
         buffer.writeBytes(value.getBytes());
 
@@ -100,6 +152,16 @@ public class MysqlByteBufUtil {
         }
     }
 
+    public static CharacterSetEnum byteToCharset(int value) {
+        for (CharacterSetEnum charset:CharacterSetEnum.values()) {
+            if (charset.getValue() == value) {
+                return charset;
+            }
+        }
+        
+        return null;
+    }
+    
     public static ServerStatusEnum[] longToServerStatus(long value) {
         int length = 0;
 

@@ -47,5 +47,9 @@ public abstract class BasePacket {
 
         return byteBuf;
     }
+    
+    public void readBody(ByteBuf bb) throws Exception {
+        
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.MysqlCommandEnum;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -38,6 +39,9 @@ public class App {
 
                         ch.writeAndFlush(writePacket);
 
+                        ch.attr(ServerAttributes.COMMANDKEY).set(MysqlCommandEnum.COM_LOGIN);
+                        
+                        ch.pipeline().addLast(new ByteToMysqlPacketDecoder());
                         ch.pipeline().addLast(new DiscardServerHandler());
                     }
 
