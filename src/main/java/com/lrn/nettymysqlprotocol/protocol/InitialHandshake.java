@@ -92,12 +92,35 @@ public class InitialHandshake extends BasePacket {
 
     @Override
     public long getPacketLength() {
-        ByteBuf encodePacket = encodePacket(Unpooled.buffer());
+        long length = 0;
+        
+        length += 1; // protocol version
+        
+        length += getServerVersion().getBytes().length + 1; // server version + 0x00
+        
+        length += 4; // connection id
 
-        int writerIndex = encodePacket.writerIndex();
+        length += 9; // auth data + 0x00
 
-        // TODO: fix this
-        return writerIndex ;
+        length += 1; // filler
+
+        length += 2; // lower 2 bytes of capacity
+
+        length += 1; // charset
+
+        length += 2; // status flags
+
+        length += 2; // higher capacity
+
+        length += 1; // length of auth data
+
+        length += 10; // reserved 10 0x00 bytes
+
+        length += 12; // auth data 2 + 0x00
+
+        length += getAuthPluginName().getBytes().length + 1; // auth plugin name +1
+        
+        return length;
     }
 
     @Override
