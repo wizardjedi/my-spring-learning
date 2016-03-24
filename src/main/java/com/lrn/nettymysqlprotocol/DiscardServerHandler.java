@@ -12,7 +12,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
     public static final Logger logger = LoggerFactory.getLogger(DiscardServerHandler.class);
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) { // (2)
+    public void channelRead(ChannelHandlerContext ctx, Object msg) {
         logger.debug("channel read");
 
         ByteBuf byteBuf = (ByteBuf)msg;
@@ -23,16 +23,15 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
 
         ByteBuf buffer = ctx.alloc().buffer();
 
-        ByteBuf writeBuffer = buffer.writeBytes("Hello\n".getBytes());
+        buffer.writeBytes("Hello\n".getBytes());
 
         ctx.writeAndFlush(buffer);
-
-        // Discard the received data silently.
-        ((ByteBuf) msg).release(); // (3)
+        
+        ((ByteBuf) msg).release();
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) { // (4)
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.debug("Exception", cause);
 
         // Close the connection when an exception is raised.
