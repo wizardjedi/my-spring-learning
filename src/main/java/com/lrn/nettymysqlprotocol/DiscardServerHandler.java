@@ -4,11 +4,10 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
+public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     public static final Logger logger = LoggerFactory.getLogger(DiscardServerHandler.class);
 
@@ -39,10 +38,7 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         logger.debug("Exception", cause);
 
-        // Close the connection when an exception is raised.
         cause.printStackTrace();
         ctx.close();
     }
-
-
 }
