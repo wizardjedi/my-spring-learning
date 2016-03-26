@@ -21,13 +21,13 @@ public class App {
     public static void main(String[] args) {
         logger.info("Application start");
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup(); // (1)
+        EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
-            ServerBootstrap b = new ServerBootstrap(); // (2)
+            ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class) // (3)
-                .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
+                .channel(NioServerSocketChannel.class)
+                .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     public void initChannel(SocketChannel ch) throws Exception {
                         logger.info("Client connected from:{}", ch.remoteAddress());
@@ -52,15 +52,11 @@ public class App {
                     }
 
                 })
-                .option(ChannelOption.SO_BACKLOG, 128) // (5)
-                .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
+                .option(ChannelOption.SO_BACKLOG, 128)
+                .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            // Bind and start to accept incoming connections.
-            ChannelFuture f = b.bind(port).sync(); // (7)
-
-            // Wait until the server socket is closed.
-            // In this example, this does not happen, but you can do that to gracefully
-            // shut down your server.
+            ChannelFuture f = b.bind(port).sync();
+            
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             logger.error("Error on create bootstrap", e);
