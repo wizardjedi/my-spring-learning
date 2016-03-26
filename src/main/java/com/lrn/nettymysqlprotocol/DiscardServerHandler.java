@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import java.util.logging.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +24,11 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter { // (1)
 
         ByteBuf buffer = ctx.alloc().buffer();
 
-        buffer.writeBytes("Hello\n".getBytes());
+        try {
+            buffer.writeBytes(HexUtils.hexToByte("0700000200000002000000"));
+        } catch (Exception ex) {
+            logger.error("Error on conversion");
+        }
 
         ctx.writeAndFlush(buffer);
         

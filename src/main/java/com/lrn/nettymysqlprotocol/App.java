@@ -34,7 +34,17 @@ public class App {
 
                         ByteBuf greetingBuffer = ch.alloc().buffer();
 
-                        greetingBuffer.writeBytes("Greeting".getBytes());
+                        String greetString = "5b0000000a352e362e32382d307562"
+                                + "756e7475302e31352e30342e31000b0000006527"
+                                + "315e686e716b00fff70802007f80150000000000"
+                                + "000000000048633c406a783d635d29513e006d79"
+                                + "73716c5f6e61746976655f70617373776f726400";
+                        
+                        greetingBuffer
+                            .writeBytes(
+                                HexUtils
+                                    .hexToByte(greetString)
+                            );
 
                         ch.writeAndFlush(greetingBuffer);
 
