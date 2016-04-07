@@ -41,6 +41,10 @@ public class HexUtils {
     }
     
     public static final String byteToHex(byte[] b) {
+        if (b == null || b.length == 0) {
+            return "";
+        }
+        
         StringBuilder sb = new StringBuilder();
         
         for (int i=0;i<b.length;i++) {

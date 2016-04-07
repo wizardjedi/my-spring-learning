@@ -80,6 +80,16 @@ public class HexUtilsTest {
     public void testByteToHex() {
         assertEquals("0120feab",HexUtils.byteToHex(new byte[]{0x01,0x20,(byte)0xfe,(byte)0xab}));
     }
+    
+    @Test
+    public void testByteToHexEmpty() {
+        assertEquals("",HexUtils.byteToHex(new byte[]{}));
+    }
+    
+    @Test
+    public void testByteToHexNull() {
+        assertEquals("",HexUtils.byteToHex(null));
+    }
 
     @Test
     public void testValidConversion() throws Exception {
