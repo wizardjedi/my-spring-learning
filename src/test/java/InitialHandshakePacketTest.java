@@ -43,7 +43,6 @@ public class InitialHandshakePacketTest {
         
         initialHandshake.setSequenceNumber(0);
         
-        
         initialHandshake.setProtocolVersion(10);
         initialHandshake.setConnectionId(11);
         initialHandshake.setServerName(FAKE_MY_SQL_SERVER_VERSION);

@@ -182,6 +182,15 @@ public class Capabilities {
         capabilities = capabilities | MysqlConstants.CapabilitiesConstants.CLIENT_REMEMBER_OPTIONS ;
     }
 
+    @Override
+    public String toString() {
+        return "Capabilities{capabilities=" + Long.toHexString(capabilities) + '}';
+    }
+    
+    public String toPrettyString() {
+        return "-*PrEtTy*-";
+    }
+
     
     
 }

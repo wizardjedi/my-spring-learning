@@ -57,6 +57,31 @@ public class HexUtils {
         return sb.toString();
     }
     
+    public static final String renderBit(int value, int length, int num, String description) {
+        StringBuilder sb = new StringBuilder();
+        
+        int bitNum=0;
+        
+        for (int i=0;i<num;i++) {
+            sb.append(".");
+            bitNum++;
+        }
+        
+        sb.append(value);
+        bitNum++;
+        
+        for (int i=bitNum;i<length;i++) {
+            sb.append(".");
+            bitNum++;
+        }
+            
+        sb.append(" | ");
+        
+        sb.append(description);
+        
+        return sb.toString();
+    }
+    
     public static final char shortToChar(short c) {
         if (c>=0 && c<=9) {
             return (char)('0'+c);
