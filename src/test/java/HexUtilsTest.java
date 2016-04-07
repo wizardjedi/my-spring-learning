@@ -46,9 +46,39 @@ public class HexUtilsTest {
         assertEquals(15, HexUtils.charToShort('F'));
     }
 
+    @Test
+    public void testShortToChar() {
+        assertEquals('0', HexUtils.shortToChar((short)0));
+        assertEquals('1', HexUtils.shortToChar((short)1));
+        assertEquals('2', HexUtils.shortToChar((short)2));
+        assertEquals('3', HexUtils.shortToChar((short)3));
+        assertEquals('4', HexUtils.shortToChar((short)4));
+        assertEquals('5', HexUtils.shortToChar((short)5));
+        assertEquals('6', HexUtils.shortToChar((short)6));
+        assertEquals('7', HexUtils.shortToChar((short)7));
+        assertEquals('8', HexUtils.shortToChar((short)8));
+        assertEquals('9', HexUtils.shortToChar((short)9));
+        assertEquals('a', HexUtils.shortToChar((short)0x0A));
+        assertEquals('b', HexUtils.shortToChar((short)0x0B));
+        assertEquals('c', HexUtils.shortToChar((short)0x0C));
+        assertEquals('d', HexUtils.shortToChar((short)0x0D));
+        assertEquals('e', HexUtils.shortToChar((short)0x0E));
+        assertEquals('f', HexUtils.shortToChar((short)0x0F));
+    }
+    
     @Test(expected = RuntimeException.class)
     public void testInvalidCharInCharToShort() {
         HexUtils.charToShort('_');
+    }
+    
+    @Test(expected = RuntimeException.class)
+    public void testInvalidByteInShortToChar() {
+        HexUtils.shortToChar((short)16);
+    }
+    
+    @Test
+    public void testByteToHex() {
+        assertEquals("0120feab",HexUtils.byteToHex(new byte[]{0x01,0x20,(byte)0xfe,(byte)0xab}));
     }
 
     @Test

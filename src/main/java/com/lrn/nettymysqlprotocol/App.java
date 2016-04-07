@@ -1,5 +1,9 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.MysqlConstants;
+import com.lrn.nettymysqlprotocol.protocol.impl.InitialHandshakePacket;
+import com.lrn.nettymysqlprotocol.transcoder.MysqlTranscoder;
+import com.lrn.nettymysqlprotocol.transcoder.TranscoderContext;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -34,20 +38,24 @@ public class App {
 
                         ByteBuf greetingBuffer = ch.alloc().buffer();
 
-                        String greetString = "5b0000000a352e362e32382d307562"
-                                + "756e7475302e31352e30342e31000b0000006527"
-                                + "315e686e716b00fff70802007f80150000000000"
-                                + "000000000048633c406a783d635d29513e006d79"
-                                + "73716c5f6e61746976655f70617373776f726400";
+                        MysqlTranscoder transcoder = new MysqlTranscoder();
                         
-                        greetingBuffer
-                            .writeBytes(
-                                HexUtils
-                                    .hexToByte(greetString)
-                            );
+                        transcoder.setContext(new TranscoderContext());
+                        
+                        transcoder.getContext().getCapabilities().setCapabilities(0x807ff7ff);
+                        transcoder.getContext().getServerStatus().setStatus(0x0002);
+                        
+                        InitialHandshakePacket greet = new InitialHandshakePacket();
+                        greet.setScramble("01234567890123456789".getBytes());
+                        greet.setCharacterSet(MysqlConstants.CharsetConstants.UTF8_GENERAL_CI);
+                        greet.setConnectionId(11);
+                        greet.setServerName("asdasd");
+                        greet.setSequenceNumber(0);
+                        
+                        transcoder.encode(greet, greetingBuffer);
 
                         ch.writeAndFlush(greetingBuffer);
-
+                        
                         ch.pipeline().addLast(new DiscardServerHandler());
                     }
 

@@ -39,6 +39,31 @@ public class HexUtils {
             }
         }
     }
+    
+    public static final String byteToHex(byte[] b) {
+        StringBuilder sb = new StringBuilder();
+        
+        for (int i=0;i<b.length;i++) {
+            short tmp = (short)b[i];
+            
+            sb.append(shortToChar((short)((tmp >> 4) & 0x0F)));
+            sb.append(shortToChar((short)(tmp & 0x0F)));
+        }
+        
+        return sb.toString();
+    }
+    
+    public static final char shortToChar(short c) {
+        if (c>=0 && c<=9) {
+            return (char)('0'+c);
+        } else {
+            if (c>=10 && c<=15) {
+                return (char)('a'+(c-10));
+            } else {
+                throw new RuntimeException("Conversion exception");
+            }
+        }
+    }
 
     
     public static void checkHexString(String hex) throws Exception {
