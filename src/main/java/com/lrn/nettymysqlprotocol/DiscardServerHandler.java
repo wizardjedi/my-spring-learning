@@ -1,5 +1,8 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.impl.OkPacket;
+import com.lrn.nettymysqlprotocol.transcoder.MysqlTranscoder;
+import com.lrn.nettymysqlprotocol.transcoder.TranscoderContext;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +14,12 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     public static final Logger logger = LoggerFactory.getLogger(DiscardServerHandler.class);
 
+    protected MysqlTranscoder transcoder = null;
+    
+    public DiscardServerHandler(MysqlTranscoder transcoder) {
+        this.transcoder = transcoder;
+    }    
+    
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         logger.debug("channel read");
@@ -21,14 +30,21 @@ public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
             logger.trace("\n{}", ByteBufUtil.prettyHexDump(byteBuf));
         }
 
+        OkPacket okPacket = new OkPacket();
+        okPacket.setAffectedRows(0);
+
+        okPacket.setSequenceNumber(2);
+        
         ByteBuf buffer = ctx.alloc().buffer();
-
+        
         try {
-            buffer.writeBytes(HexUtils.hexToByte("0700000200000002000000"));
-        } catch (Exception ex) {
-            logger.error("Error on conversion");
+            transcoder.encode(okPacket, buffer);
+        } catch (Exception e) {
+            
         }
-
+        
+        logger.trace("\n{}", ByteBufUtil.prettyHexDump(buffer));
+        
         ctx.writeAndFlush(buffer);
         
         ((ByteBuf) msg).release();

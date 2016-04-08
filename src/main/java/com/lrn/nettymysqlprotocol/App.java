@@ -56,7 +56,7 @@ public class App {
 
                         ch.writeAndFlush(greetingBuffer);
                         
-                        ch.pipeline().addLast(new DiscardServerHandler());
+                        ch.pipeline().addLast(new DiscardServerHandler(transcoder));
                     }
 
                 })

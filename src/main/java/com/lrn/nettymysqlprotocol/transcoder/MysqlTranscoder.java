@@ -3,6 +3,7 @@ package com.lrn.nettymysqlprotocol.transcoder;
 import com.lrn.nettymysqlprotocol.protocol.MysqlByteBufUtil;
 import com.lrn.nettymysqlprotocol.protocol.Packet;
 import com.lrn.nettymysqlprotocol.protocol.impl.InitialHandshakePacket;
+import com.lrn.nettymysqlprotocol.protocol.impl.OkPacket;
 import io.netty.buffer.ByteBuf;
 
 public class MysqlTranscoder {
@@ -29,7 +30,7 @@ public class MysqlTranscoder {
                 ((InitialHandshakePacket) packet).setCapabilities(getContext().getCapabilities());
                 ((InitialHandshakePacket) packet).setStatus(getContext().getServerStatus());
             }
-            
+                                    
             packet.calculateAndSetBodyLength(context);
 
             MysqlByteBufUtil.writeInt3(bb, packet.getBodyLength());
