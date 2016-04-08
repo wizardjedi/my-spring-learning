@@ -1,6 +1,16 @@
 package com.lrn.nettymysqlprotocol;
 
+/**
+ * Various hex handling util functions
+ */
 public class HexUtils {
+    /**
+     * Convert hex string to byte array
+     * 
+     * @param hex
+     * @return
+     * @throws Exception 
+     */
     public static byte[] hexToByte(String hex) throws Exception {
         if (hex == null || "".equals(hex)) {
             return new byte[]{};
@@ -24,6 +34,12 @@ public class HexUtils {
         }
     }
     
+    /**
+     * Convert char ('0'..'9''a'..'f') to short value (0..15)
+     * 
+     * @param c
+     * @return 
+     */
     public static final short charToShort(char c) {
         if (c >= 0x30 && c <= 0x39) {
             return (short) (c - 0x30);
@@ -40,6 +56,12 @@ public class HexUtils {
         }
     }
     
+    /**
+     * Convert byte to 2-symbol hex string
+     * 
+     * @param b
+     * @return 
+     */
     public static final String byteToHex(byte[] b) {
         if (b == null || b.length == 0) {
             return "";
@@ -57,10 +79,28 @@ public class HexUtils {
         return sb.toString();
     }
     
+    /**
+     * Render string with boolean bit position and description
+     * 
+     * @param value
+     * @param length
+     * @param num
+     * @param description
+     * @return 
+     */
     public static final String renderBit(boolean value, long length, long num, String description) {
         return renderBit(value ? 1 : 0, length, num, description);
     }
     
+    /**
+     * Render string with bit value and position and description
+     * 
+     * @param value
+     * @param length
+     * @param num
+     * @param description
+     * @return 
+     */
     public static final String renderBit(int value, long length, long num, String description) {
         StringBuilder sb = new StringBuilder();
         
@@ -85,6 +125,11 @@ public class HexUtils {
         return sb.toString();
     }
     
+    /**
+     * Convert values (0..15) to hex chars ('0'..'9''a'..'f')
+     * @param c
+     * @return 
+     */
     public static final char shortToChar(short c) {
         if (c>=0 && c<=9) {
             return (char)('0'+c);
@@ -97,7 +142,13 @@ public class HexUtils {
         }
     }
 
-    
+    /**
+     * Check hex string. Length of string must be even. 
+     * Characters permitted '0'..'9''a'..'f' and upper case.
+     * 
+     * @param hex
+     * @throws Exception 
+     */
     public static void checkHexString(String hex) throws Exception {
         if (hex != null) {
             if ( (hex.length() % 2) != 0 ) {
