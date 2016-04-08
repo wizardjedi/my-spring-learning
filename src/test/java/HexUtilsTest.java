@@ -93,14 +93,17 @@ public class HexUtilsTest {
 
     @Test
     public void testRenderBit() {
-        assertEquals("1.. | First bit of 3", HexUtils.renderBit(1, 3, 0, "First bit of 3"));
-        assertEquals("0.. | First bit of 3", HexUtils.renderBit(0, 3, 0, "First bit of 3"));
+        assertEquals("..1 | First bit of 3", HexUtils.renderBit(1, 3, 0, "First bit of 3"));
+        assertEquals("..0 | First bit of 3", HexUtils.renderBit(0, 3, 0, "First bit of 3"));
         
         assertEquals(".1. | Second bit of 3", HexUtils.renderBit(1, 3, 1, "Second bit of 3"));
         assertEquals(".0. | Second bit of 3", HexUtils.renderBit(0, 3, 1, "Second bit of 3"));
         
-        assertEquals("..1 | Last bit of 3", HexUtils.renderBit(1, 3, 2, "Last bit of 3"));
-        assertEquals("..0 | Last bit of 3", HexUtils.renderBit(0, 3, 2, "Last bit of 3"));
+        assertEquals("1.. | Last bit of 3", HexUtils.renderBit(1, 3, 2, "Last bit of 3"));
+        assertEquals("0.. | Last bit of 3", HexUtils.renderBit(0, 3, 2, "Last bit of 3"));
+        
+        assertEquals("..1. .... | Bit 5 of 8", HexUtils.renderBit(1, 8, 5, "Bit 5 of 8"));
+        assertEquals(".... ..1. | .... .... | Bit 9 of 16", HexUtils.renderBit(1, 16, 9, "Bit 9 of 16"));        
     }
     
     @Test

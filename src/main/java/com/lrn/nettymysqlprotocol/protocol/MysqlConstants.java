@@ -73,6 +73,62 @@ public class MysqlConstants {
         public static final long CLIENT_DEPRECATE_EOF = 1L << 24;
         public static final long CLIENT_SSL_VERIFY_SERVER_CERT = 1L << 30;
         public static final long CLIENT_REMEMBER_OPTIONS = 1L << 31;
+        
+        public static final long BIT_NUM_CLIENT_LONG_PASSWORD = 0;        /* new more secure passwords */
+        public static final long BIT_NUM_CLIENT_FOUND_ROWS = 1;           /* Found instead of affected rows */
+        public static final long BIT_NUM_CLIENT_LONG_FLAG = 2;            /* Get all column flags */
+        public static final long BIT_NUM_CLIENT_CONNECT_WITH_DB = 3;      /* One can specify db on connect */
+        public static final long BIT_NUM_CLIENT_NO_SCHEMA = 4;           /* Don't allow database.table.column */
+        public static final long BIT_NUM_CLIENT_COMPRESS = 5;            /* Can use compression protocol */
+        public static final long BIT_NUM_CLIENT_ODBC = 6;                /* Odbc client */
+        public static final long BIT_NUM_CLIENT_LOCAL_FILES = 7;        /* Can use LOAD DATA LOCAL */
+        public static final long BIT_NUM_CLIENT_IGNORE_SPACE = 8;       /* Ignore spaces before left brace */
+        public static final long BIT_NUM_CLIENT_PROTOCOL_41 = 9;        /* New 4.1 protocol */
+        public static final long BIT_NUM_CLIENT_INTERACTIVE = 10;       /* This is an interactive client */
+        public static final long BIT_NUM_CLIENT_SSL = 11;               /* Switch to SSL after handshake */
+        public static final long BIT_NUM_CLIENT_IGNORE_SIGPIPE = 12;    /* IGNORE sigpipes */
+        public static final long BIT_NUM_CLIENT_TRANSACTIONS = 13;      /* Client knows about transactions */
+        public static final long BIT_NUM_CLIENT_RESERVED = 14;         /* Old flag for 4.1 protocol  */
+        public static final long BIT_NUM_CLIENT_SECURE_CONNECTION = 15;    /* Old flag for 4.1 authentication */
+        public static final long BIT_NUM_CLIENT_MULTI_STATEMENTS = 16;  /* Enable/disable multi-stmt support */
+        public static final long BIT_NUM_CLIENT_MULTI_RESULTS = 17;     /* Enable/disable multi-results */
+        public static final long BIT_NUM_CLIENT_PS_MULTI_RESULTS = 18;  /* Multi-results in PS-protocol */
+        public static final long BIT_NUM_CLIENT_PLUGIN_AUTH = 19;       /* Client supports plugin authentication */
+        public static final long BIT_NUM_CLIENT_CONNECT_ATTRS = 20;     /* Client supports connection attributes */
+        public static final long BIT_NUM_CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA = 21;
+        public static final long BIT_NUM_CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS = 22;
+        public static final long BIT_NUM_CLIENT_SESSION_TRACK = 23;
+        public static final long BIT_NUM_CLIENT_DEPRECATE_EOF = 24;
+        public static final long BIT_NUM_CLIENT_SSL_VERIFY_SERVER_CERT = 30;
+        public static final long BIT_NUM_CLIENT_REMEMBER_OPTIONS = 31;
+        
+        public static final String DESCRIPTION_CLIENT_LONG_PASSWORD = "CLIENT_LONG_PASSWORD: Use the improved version of Old Password Authentication.";
+        public static final String DESCRIPTION_CLIENT_FOUND_ROWS = "CLIENT_FOUND_ROWS: Send found rows instead of affected rows in EOF_Packet.";
+        public static final String DESCRIPTION_CLIENT_LONG_FLAG = "CLIENT_LONG_FLAG: Longer flags in Protocol::ColumnDefinition320.";
+        public static final String DESCRIPTION_CLIENT_CONNECT_WITH_DB = "CLIENT_CONNECT_WITH_DB:Database (schema) name can be specified on connect in Handshake Response Packet.";
+        public static final String DESCRIPTION_CLIENT_NO_SCHEMA = "CLIENT_NO_SCHEMA: Do not permit database.table.column. ";         
+        public static final String DESCRIPTION_CLIENT_COMPRESS = "CLIENT_COMPRESS: Compression protocol supported. ";          
+        public static final String DESCRIPTION_CLIENT_ODBC = "CLIENT_ODBC: Special handling of ODBC behavior. ";              
+        public static final String DESCRIPTION_CLIENT_LOCAL_FILES = "CLIENT_LOCAL_FILES: Can use LOAD DATA LOCAL. ";       
+        public static final String DESCRIPTION_CLIENT_IGNORE_SPACE = "CLIENT_IGNORE_SPACE: Let the parser ignore spaces before '('. ";      
+        public static final String DESCRIPTION_CLIENT_PROTOCOL_41 = "CLIENT_PROTOCOL_41: Supports the 4.1 protocol. ";       
+        public static final String DESCRIPTION_CLIENT_INTERACTIVE = "CLIENT_INTERACTIVE: wait_timeout versus wait_interactive_timeout. ";      
+        public static final String DESCRIPTION_CLIENT_SSL = "CLIENT_SSL: Switch to SSL after sending the capability-flags. ";              
+        public static final String DESCRIPTION_CLIENT_IGNORE_SIGPIPE = "CLIENT_IGNORE_SIGPIPE: Do not issue SIGPIPE if network failures occur (libmysqlclient only). ";   
+        public static final String DESCRIPTION_CLIENT_TRANSACTIONS = "CLIENT_TRANSACTIONS: Can send status flags in EOF_Packet.";     
+        public static final String DESCRIPTION_CLIENT_RESERVED = "CLIENT_RESERVED: Unused.";         
+        public static final String DESCRIPTION_CLIENT_SECURE_CONNECTION = "CLIENT_SECURE_CONNECTION: Supports Authentication::Native41."; 
+        public static final String DESCRIPTION_CLIENT_MULTI_STATEMENTS = "CLIENT_MULTI_STATEMENTS: Can handle multiple statements per COM_QUERY and COM_STMT_PREPARE.";  
+        public static final String DESCRIPTION_CLIENT_MULTI_RESULTS = "CLIENT_MULTI_RESULTS: Can handle multiple resultsets for COM_QUERY.";     
+        public static final String DESCRIPTION_CLIENT_PS_MULTI_RESULTS = "CLIENT_PS_MULTI_RESULTS: Can handle multiple resultsets for COM_STMT_EXECUTE.";  
+        public static final String DESCRIPTION_CLIENT_PLUGIN_AUTH = "CLIENT_PLUGIN_AUTH: Sends extra data in Initial Handshake Packet and supports the pluggable authentication protocol.";       
+        public static final String DESCRIPTION_CLIENT_CONNECT_ATTRS = "CLIENT_CONNECT_ATTRS: Permits connection attributes in Protocol::HandshakeResponse41.";     
+        public static final String DESCRIPTION_CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA = "CLIENT_PLUGIN_AUTH_LENENC_CLIENT_DATA: Understands length-encoded integer for auth response data in Protocol::HandshakeResponse41.";
+        public static final String DESCRIPTION_CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS = "CLIENT_CAN_HANDLE_EXPIRED_PASSWORDS: Can handle expired passwords.";
+        public static final String DESCRIPTION_CLIENT_SESSION_TRACK = "CLIENT_SESSION_TRACK: Can set SERVER_SESSION_STATE_CHANGED in the Status Flags and send session-state change data after a OK packet.";
+        public static final String DESCRIPTION_CLIENT_DEPRECATE_EOF = "CLIENT_DEPRECATE_EOF: Expects an OK (instead of EOF) after the resultset rows of a Text Resultset.";
+        public static final String DESCRIPTION_CLIENT_SSL_VERIFY_SERVER_CERT = "CLIENT_SSL_VERIFY_SERVER_CERT:";
+        public static final String DESCRIPTION_CLIENT_REMEMBER_OPTIONS = "CLIENT_REMEMBER_OPTIONS:";
     }
     
     /**
@@ -113,6 +169,37 @@ public class MysqlConstants {
         public static final long SERVER_PS_OUT_PARAMS	 = 0x1000;
         public static final long SERVER_STATUS_IN_TRANS_READONLY = 0x2000;	//in a read-only transaction
         public static final long SERVER_SESSION_STATE_CHANGED = 0x4000;	//connection state information has changed
+                
+        public static final long BIT_NUM_SERVER_STATUS_IN_TRANS = 0; //a transaction is active
+        public static final long BIT_NUM_SERVER_STATUS_AUTOCOMMIT = 1;	//auto-commit is enabled
+        public static final long BIT_NUM_SERVER_MORE_RESULTS_EXISTS = 3;
+        public static final long BIT_NUM_SERVER_STATUS_NO_GOOD_INDEX_USED = 4;
+        public static final long BIT_NUM_SERVER_STATUS_NO_INDEX_USED = 5;
+        public static final long BIT_NUM_SERVER_STATUS_CURSOR_EXISTS = 6;    //	Used by Binary Protocol Resultset to signal that COM_STMT_FETCH must be used to fetch the row-data.
+        public static final long BIT_NUM_SERVER_STATUS_LAST_ROW_SENT = 7;
+        public static final long BIT_NUM_SERVER_STATUS_DB_DROPPED = 8;
+        public static final long BIT_NUM_SERVER_STATUS_NO_BACKSLASH_ESCAPES = 9;
+        public static final long BIT_NUM_SERVER_STATUS_METADATA_CHANGED = 10;
+        public static final long BIT_NUM_SERVER_QUERY_WAS_SLOW = 11;
+        public static final long BIT_NUM_SERVER_PS_OUT_PARAMS	 = 12;
+        public static final long BIT_NUM_SERVER_STATUS_IN_TRANS_READONLY = 13;	//in a read-only transaction
+        public static final long BIT_NUM_SERVER_SESSION_STATE_CHANGED = 14;	//connection state information has changed
+        
+        public static final String DESCRIPTION_SERVER_STATUS_IN_TRANS = "SERVER_STATUS_IN_TRANS: a transaction is active";
+        public static final String DESCRIPTION_SERVER_STATUS_AUTOCOMMIT = "SERVER_STATUS_AUTOCOMMIT: auto-commit is enabled";
+        public static final String DESCRIPTION_SERVER_MORE_RESULTS_EXISTS = "SERVER_MORE_RESULTS_EXISTS:";
+        public static final String DESCRIPTION_SERVER_STATUS_NO_GOOD_INDEX_USED = "SERVER_STATUS_NO_GOOD_INDEX_USED:";
+        public static final String DESCRIPTION_SERVER_STATUS_NO_INDEX_USED = "SERVER_STATUS_NO_INDEX_USED:";
+        public static final String DESCRIPTION_SERVER_STATUS_CURSOR_EXISTS = "SERVER_STATUS_CURSOR_EXISTS: Used by Binary Protocol Resultset to signal that COM_STMT_FETCH must be used to fetch the row-data.";
+        public static final String DESCRIPTION_SERVER_STATUS_LAST_ROW_SENT = "SERVER_STATUS_LAST_ROW_SENT:";
+        public static final String DESCRIPTION_SERVER_STATUS_DB_DROPPED = "SERVER_STATUS_DB_DROPPED:";
+        public static final String DESCRIPTION_SERVER_STATUS_NO_BACKSLASH_ESCAPES = "SERVER_STATUS_NO_BACKSLASH_ESCAPES:";
+        public static final String DESCRIPTION_SERVER_STATUS_METADATA_CHANGED = "SERVER_STATUS_METADATA_CHANGED:";
+        public static final String DESCRIPTION_SERVER_QUERY_WAS_SLOW = "SERVER_QUERY_WAS_SLOW:";
+        public static final String DESCRIPTION_SERVER_PS_OUT_PARAMS	 = "SERVER_PS_OUT_PARAMS:";
+        public static final String DESCRIPTION_SERVER_STATUS_IN_TRANS_READONLY = "SERVER_STATUS_IN_TRANS_READONLY: in a read-only transaction";
+        public static final String DESCRIPTION_SERVER_SESSION_STATE_CHANGED = "SERVER_SESSION_STATE_CHANGED: connection state information has changed";
+
     }
     
     /**

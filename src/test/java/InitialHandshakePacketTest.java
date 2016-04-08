@@ -41,6 +41,9 @@ public class InitialHandshakePacketTest {
         capabilities.setCapabilities(0x807ff7ff);
         serverStatus.setStatus(0x0002);
         
+        System.out.println(capabilities.toPrettyString(true));
+        System.out.println(serverStatus.toPrettyString(false));
+        
         initialHandshake.setSequenceNumber(0);
         
         initialHandshake.setProtocolVersion(10);
