@@ -7,14 +7,14 @@ public class MysqlConstants {
      * @see https://github.com/mysql/mysql-server/blob/HEAD/include/my_command.h
      */
     public static class CommandConstants {
-        public static final int COM_SLEEP = 0;
-        public static final int COM_QUIT = 1;
-        public static final int COM_INIT_DB = 2;
-        public static final int COM_QUERY = 3;
-        public static final int COM_FIELD_LIST = 4;
-        public static final int COM_CREATE_DB = 5;
-        public static final int COM_DROP_DB = 6;
-        public static final int COM_REFRESH = 7;
+        public static final int COM_SLEEP = 0;  // @see https://dev.mysql.com/doc/internals/en/com-sleep.html
+        public static final int COM_QUIT = 1;   // @see https://dev.mysql.com/doc/internals/en/com-quit.html
+        public static final int COM_INIT_DB = 2; // @see https://dev.mysql.com/doc/internals/en/com-init-db.html
+        public static final int COM_QUERY = 3;   // @see https://dev.mysql.com/doc/internals/en/com-query.html
+        public static final int COM_FIELD_LIST = 4; // @see https://dev.mysql.com/doc/internals/en/com-field-list.html
+        public static final int COM_CREATE_DB = 5;  // @see https://dev.mysql.com/doc/internals/en/com-create-db.html
+        public static final int COM_DROP_DB = 6;    // @see https://dev.mysql.com/doc/internals/en/com-drop-db.html
+        public static final int COM_REFRESH = 7;    // @see https://dev.mysql.com/doc/internals/en/com-refresh.html
         public static final int COM_SHUTDOWN = 8;
         public static final int COM_STATISTICS = 9;
         public static final int COM_PROCESS_INFO = 10;
@@ -29,13 +29,13 @@ public class MysqlConstants {
         public static final int COM_TABLE_DUMP = 19;
         public static final int COM_CONNECT_OUT = 20;
         public static final int COM_REGISTER_SLAVE = 21;
-        public static final int COM_STMT_PREPARE = 22;
-        public static final int COM_STMT_EXECUTE = 23;
-        public static final int COM_STMT_SEND_LONG_DATA = 24;
-        public static final int COM_STMT_CLOSE = 25;
-        public static final int COM_STMT_RESET = 26;
-        public static final int COM_SET_OPTION = 27;
-        public static final int COM_STMT_FETCH = 28;
+        public static final int COM_STMT_PREPARE = 22;  // @see https://dev.mysql.com/doc/internals/en/com-stmt-prepare.html
+        public static final int COM_STMT_EXECUTE = 23;  // @see https://dev.mysql.com/doc/internals/en/com-stmt-execute.html
+        public static final int COM_STMT_SEND_LONG_DATA = 24; // @see https://dev.mysql.com/doc/internals/en/com-stmt-send-long-data.html
+        public static final int COM_STMT_CLOSE = 25; // @see https://dev.mysql.com/doc/internals/en/com-stmt-close.html
+        public static final int COM_STMT_RESET = 26; // @see https://dev.mysql.com/doc/internals/en/com-stmt-reset.html
+        public static final int COM_SET_OPTION = 27; // @see https://dev.mysql.com/doc/internals/en/com-set-option.html
+        public static final int COM_STMT_FETCH = 28; // @see https://dev.mysql.com/doc/internals/en/com-stmt-fetch.html
         public static final int COM_DAEMON = 29;
         public static final int COM_BINLOG_DUMP_GTID = 30;
         public static final int COM_RESET_CONNECTION = 31;
