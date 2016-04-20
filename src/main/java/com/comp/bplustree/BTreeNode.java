@@ -11,6 +11,8 @@ public class BTreeNode<KeyClass extends Comparable, ValueClass> {
 
     public static final int MAX_LEAFS = 4;
 
+    public static final float FILL_FACTOR = 0.5f;
+    
     protected BTreeNodeType type = BTreeNodeType.LEAF;
 
     protected BTreeNode<KeyClass, ValueClass> parent = null;
@@ -348,8 +350,8 @@ public class BTreeNode<KeyClass extends Comparable, ValueClass> {
             ) {
                 int len = getKeys().length;
 
-                int factor = len / 2 + 1;
-
+                int factor = (int)Math.floor(len * FILL_FACTOR) + 1;
+                System.out.println("Len="+len+" factor="+factor );
                 int newNodeLength = len - factor ;
 
                 KeyClass middle = (KeyClass)getKeys()[factor-1];
@@ -392,7 +394,7 @@ public class BTreeNode<KeyClass extends Comparable, ValueClass> {
             ) {
                 int len = getKeys().length;
 
-                int factor = len / 2 + 1;
+                int factor = (int)Math.floor(len * FILL_FACTOR) + 1;
 
                 int newNodeLength = len - factor ;
 
@@ -511,7 +513,7 @@ public class BTreeNode<KeyClass extends Comparable, ValueClass> {
                     + ", values=" + Arrays.toString(values) 
                     + ", pointers=" + Arrays.toString(pointers) 
                 + '}';
-    }
+    }    
     
     public static class InsertResult<KeyClass extends Comparable, ValueClass> {
         protected BTreeNode<KeyClass, ValueClass> left;

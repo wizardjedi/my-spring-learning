@@ -1,6 +1,8 @@
 package com.comp.bplustree;
 
 import java.lang.reflect.Array;
+import java.util.Arrays;
+import sun.security.util.KeyUtil;
 
 public class ArrayUtils {
     public static int findPosition(Comparable[] keys, Comparable key) {
@@ -8,13 +10,17 @@ public class ArrayUtils {
             return -1;
         }
         
-        for (int i=0;i<keys.length;i++) {
+        int pos = Arrays.binarySearch(keys, key);
+        
+        return pos >= 0 ? pos : -1;
+        
+        /*for (int i=0;i<keys.length;i++) {
             if (keys[i].compareTo(key) == 0) {
                 return i;
             }
-        }
+        }*/
         
-        return -1;
+        //return -1;
     }
     
     public static int findLocation(Comparable[] keys, Comparable key) {
@@ -22,20 +28,24 @@ public class ArrayUtils {
             return 0;
         }
         
-        Comparable prev = key;
+        int pos = Arrays.binarySearch(keys, key);
         
-        for (int i=0;i<keys.length;i++) {
-            if (
-                prev.compareTo(key) <=0
-                && keys[i].compareTo(key) > 0
-            ) {
-                return i;
-            }
-            
-            prev = keys[i];
+        if (pos < 0) {
+            return (-pos) - 1;
+        } else {
+            return pos;
         }
-        
-        return keys.length;
+        /*Comparable prev = key;
+        for (int i=0;i<keys.length;i++) {
+        if (
+        prev.compareTo(key) <=0
+        && keys[i].compareTo(key) > 0
+        ) {
+        return i;
+        }
+        prev = keys[i];        
+        }
+        return keys.length;*/
     }
     
     public static <T> T[] subArray(T[] array, int from, int length) {

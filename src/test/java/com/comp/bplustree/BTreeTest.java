@@ -36,14 +36,14 @@ public class BTreeTest {
         Assert.assertArrayEquals(new Long[]{1L,2L,3L}, tree.getRoot().getPointers()[0].getValues());
         
         Assert.assertArrayEquals(new Long[]{4L,5L}, tree.getRoot().getPointers()[1].getKeys());
-        Assert.assertArrayEquals(new Long[]{4L,5L}, tree.getRoot().getPointers()[1].getValues());             
+        Assert.assertArrayEquals(new Long[]{4L,5L}, tree.getRoot().getPointers()[1].getValues());          
     }
     
     @Test
     public void testInsert2() throws IOException {
         //BTreeNode.buildGraphviz(tree.getRoot(), "/tmp/0.dot");
         
-        for (int i=1;i<30;i++) {
+        for (int i=1;i<100;i++) {
             tree.insert(Long.valueOf(i), Long.valueOf(i));
             
             BTreeNode.buildGraphviz(tree.getRoot(), "/tmp/"+i+".dot");
