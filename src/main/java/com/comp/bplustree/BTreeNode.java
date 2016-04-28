@@ -338,6 +338,37 @@ public class BTreeNode<KeyClass extends Comparable, ValueClass> {
         }
     }
     
+    public BTreeNode mergeLeaf(BTreeNode left, BTreeNode right) {
+        if (left.getType() != right.getType()) {
+            throw new RuntimeException("Only leaves of obe type acceptable for merge");
+        }
+        
+        if (left.isLeaf()) {
+            // only values and keys
+            KeyClass[] leftKeys = (KeyClass[]) left.getKeys();
+            KeyClass[] rightKeys = (KeyClass[]) right.getKeys();
+            final int leftKeysLength = leftKeys.length;
+            final int rightKeysLength = rightKeys.length;
+            
+            ValueClass[] leftValues = (ValueClass[])left.getValues();
+            ValueClass[] rightValues = (ValueClass[])right.getValues();
+            final int leftValuesLength = leftValues.length;
+            final int rightValuesLength = rightValues.length;
+            
+            KeyClass[] newKeys = (KeyClass[] )new Comparable[leftKeysLength + rightKeysLength];
+            
+            ValueClass[] newValues = (ValueClass[]) new Object[leftValuesLength + rightValuesLength];
+            
+            ArrayUtils.
+            
+            System.arraycopy(leftKeys, 0, newKeys, 0, leftKeysLength);
+            System.arraycopy(rightKeys, 0, newKeys, leftKeysLength, rightKeysLength);
+            
+        } else {
+            // keys and pointers
+        }
+    }
+    
     /**
      * Split leaf node. Middle element will be the last in left array.
      * @return 

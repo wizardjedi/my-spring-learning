@@ -75,6 +75,8 @@ public class BTreeTest {
         tree.insert(4L, 4L);
         tree.insert(5L, 5L);        
         
+        BTreeNode.buildGraphviz(tree.getRoot(), "/tmp/before-delete.dot");
+        
         tree.delete(1L);
         
         BTreeNode.buildGraphviz(tree.getRoot(), "/tmp/delete.dot");

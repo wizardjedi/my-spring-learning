@@ -4,7 +4,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import sun.security.util.KeyUtil;
 
-public class ArrayUtils {
+public class ArrayUtils {    
     public static int findPosition(Comparable[] keys, Comparable key) {
         if (keys == null || keys.length == 0) {
             return -1;
@@ -46,6 +46,18 @@ public class ArrayUtils {
         prev = keys[i];        
         }
         return keys.length;*/
+    }
+    
+    public static <T> T[] mergeArrays(T[] left, T[] right) {
+        /*if (array == null || array.length == 0) {
+            return null;
+        }*/
+        
+        T[] sub = (T [])Array.newInstance(array[0].getClass(), length);
+        
+        System.arraycopy(array, from, sub, 0, length);
+        
+        return sub;
     }
     
     public static <T> T[] subArray(T[] array, int from, int length) {
