@@ -1,0 +1,24 @@
+package learn.compiler;
+
+/**
+ *
+ */
+enum TokenTypeEnum {
+	UNKNOWN,
+	COMMENT,
+	KW_BEGIN,
+	KW_FUNCTION,
+	LBRACE,
+	RBRACE,
+	NUMBER,
+	COMMA,
+	STRING,
+	INCREMENT,
+	ASSIGN,
+	ATOM,
+	LFBRACE,
+	RFBRACE,
+	SEMICOLON,
+	MACRO
+	;
+}
