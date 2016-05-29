@@ -26,6 +26,9 @@ public class ComQueryPacketTest {
     public void before() {
         transcoder = new MysqlTranscoder();
         transcoderContext = new TranscoderContext();
+
+        transcoderContext.setCommandPhase();
+
         transcoder.setContext(transcoderContext);
 
         capabilities = transcoderContext.getCapabilities();

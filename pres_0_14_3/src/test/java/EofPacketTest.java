@@ -24,11 +24,14 @@ public class EofPacketTest {
     public void before() {
         transcoder = new MysqlTranscoder();
         transcoderContext = new TranscoderContext();
+
+        transcoderContext.setCommandPhase();
+
         transcoder.setContext(transcoderContext);
 
         capabilities = transcoderContext.getCapabilities();
         serverStatus = transcoderContext.getServerStatus();
     }
 
-    
+
 }

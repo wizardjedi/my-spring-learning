@@ -4,6 +4,7 @@ import com.lrn.nettymysqlprotocol.protocol.MysqlByteBufUtil;
 import com.lrn.nettymysqlprotocol.protocol.Packet;
 import com.lrn.nettymysqlprotocol.protocol.impl.ComQueryPacket;
 import com.lrn.nettymysqlprotocol.protocol.impl.InitialHandshakePacket;
+import com.lrn.nettymysqlprotocol.protocol.impl.LoginPacket;
 import io.netty.buffer.ByteBuf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,18 +64,26 @@ public class MysqlTranscoder {
             return null;
         }
 
-        int type = bb.readUnsignedByte();
-
-        logger.debug("type:{}", type);
-
         Packet packet;
 
-        switch (type) {
-            case 0x03 :
-                packet = new ComQueryPacket();
-                break;
-            default:
+        if (getContext().isCommandPhase()) {
+            int type = bb.readUnsignedByte();
+
+            logger.debug("type:{}", type);
+
+            switch (type) {
+                case 0x03 :
+                    packet = new ComQueryPacket();
+                    break;
+                default:
+                    return null;
+            }
+        } else {
+            if (getContext().isAuthPhase()) {
+                packet = new LoginPacket();
+            } else {
                 return null;
+            }
         }
 
         packet.setSequenceNumber((int)packetNumber);

@@ -11,55 +11,58 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class OkPacketTest {
-    
+
     protected MysqlTranscoder transcoder;
-    
+
     protected TranscoderContext transcoderContext;
-    
+
     protected Capabilities capabilities;
-    
+
     protected ServerStatus serverStatus;
-    
+
     @Before
     public void before() {
         transcoder = new MysqlTranscoder();
         transcoderContext = new TranscoderContext();
+
+        transcoderContext.setCommandPhase();
+
         transcoder.setContext(transcoderContext);
-        
+
         capabilities = transcoderContext.getCapabilities();
         serverStatus = transcoderContext.getServerStatus();
     }
-    
+
     @Test
     public void testSimpleOk() throws Exception {
         ByteBuf buffer = Unpooled.buffer();
-        
+
         OkPacket okPacket = new OkPacket();
         okPacket.setSequenceNumber(2);
-        
+
         capabilities.setClientProtocol41();
         serverStatus.setServerStatusAutocommit();
-        
+
         transcoder.encode(okPacket, buffer);
-        
+
         assertEquals("0700000200000002000000", ByteBufUtil.hexDump(buffer));
     }
-    
+
      @Test
     public void testSimpleOk2() throws Exception {
         ByteBuf buffer = Unpooled.buffer();
-        
+
         OkPacket okPacket = new OkPacket();
         okPacket.setSequenceNumber(1);
-        
+
         capabilities.setClientProtocol41();
         serverStatus.setServerStatusAutocommit();
-        
+
         okPacket.setAffectedRows(1);
         okPacket.setLastInsertId(2);
-        
+
         transcoder.encode(okPacket, buffer);
-        
+
         assertEquals("0700000100010202000000", ByteBufUtil.hexDump(buffer));
     }
 }

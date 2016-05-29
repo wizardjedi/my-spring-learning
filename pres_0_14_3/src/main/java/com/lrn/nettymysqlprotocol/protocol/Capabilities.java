@@ -6,6 +6,13 @@ public class Capabilities {
 
     protected long capabilities;
 
+    public Capabilities() {
+    }
+
+    public Capabilities(long capabilities) {
+        this.capabilities = capabilities;
+    }
+
     public long getHighWord() {
         return capabilities >> 16;
     }

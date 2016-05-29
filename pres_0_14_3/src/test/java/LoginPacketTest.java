@@ -24,6 +24,9 @@ public class LoginPacketTest {
     public void before() {
         transcoder = new MysqlTranscoder();
         transcoderContext = new TranscoderContext();
+
+        transcoderContext.setAuthPhase();
+
         transcoder.setContext(transcoderContext);
 
         capabilities = transcoderContext.getCapabilities();
@@ -48,6 +51,8 @@ public class LoginPacketTest {
         byte[] initialByteArray = HexUtils.hexToByte(initialPacket);
 
         LoginPacket decodeLogin = (LoginPacket)transcoder.decode(Unpooled.buffer().writeBytes(initialByteArray));
+
+        System.out.println(decodeLogin);
 
         Assert.assertEquals(174, decodeLogin.getBodyLength());
         Assert.assertEquals(1, decodeLogin.getSequenceNumber());

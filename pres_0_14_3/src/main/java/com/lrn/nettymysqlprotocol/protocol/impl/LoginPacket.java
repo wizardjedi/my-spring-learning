@@ -111,8 +111,8 @@ public class LoginPacket extends BasePacket {
         byte[] passwordBytes = MysqlByteBufUtil.readNullTerminatedString(bb);
 
         this.setMaxPacket(maxPacket);
-        this.setCharset(this.charset);
-        this.setCapabilities(this.capabilities);
+        this.setCharset(charset);
+        this.setCapabilities(new Capabilities(capabilities));
         this.setLogin(new String(loginBytes, "UTF-8"));
         this.setPassword(new String(passwordBytes, "UTF-8"));
     }
@@ -127,5 +127,9 @@ public class LoginPacket extends BasePacket {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    public String toString() {
+        return "LoginPacket{" + "login=" + login + ", password=" + password + ", charset=" + charset + ", capabilities=" + capabilities + ", maxPacket=" + maxPacket + '}';
+    }
 
 }
