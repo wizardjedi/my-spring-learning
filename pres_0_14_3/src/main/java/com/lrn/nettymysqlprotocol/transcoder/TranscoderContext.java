@@ -1,9 +1,14 @@
 package com.lrn.nettymysqlprotocol.transcoder;
 
+import com.lrn.nettymysqlprotocol.DefaultServerHandler;
 import com.lrn.nettymysqlprotocol.protocol.Capabilities;
 import com.lrn.nettymysqlprotocol.protocol.ServerStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TranscoderContext {
+    public static final Logger logger = LoggerFactory.getLogger(TranscoderContext.class);
+    
     protected Capabilities capabilities = new Capabilities();
 
     protected ServerStatus serverStatus = new ServerStatus();
