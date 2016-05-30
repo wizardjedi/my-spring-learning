@@ -80,6 +80,10 @@
                 <version>2.7</version>
                 <configuration>
                     <instrumentation>
+                        <ignores>
+                            <ignore>com.lrn.nettymysqlprotocol.server.ResultSet.get*</ignore>
+                            <ignore>com.lrn.nettymysqlprotocol.server.ResultSet.set*</ignore>
+                        </ignores>
                         <excludes>
                             <exclude>**/MysqlConstants*.class</exclude>
                         </excludes>

@@ -119,12 +119,12 @@ public class LoginPacket extends BasePacket {
 
     @Override
     public void writeBody(ByteBuf bb, TranscoderContext context) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public int calculateBodyLength(TranscoderContext context) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

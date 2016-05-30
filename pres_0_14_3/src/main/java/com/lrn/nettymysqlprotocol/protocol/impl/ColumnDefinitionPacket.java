@@ -58,12 +58,12 @@ public class ColumnDefinitionPacket extends BasePacket {
             MysqlByteBufUtil.getLenencStringLength(getName().getBytes()) +
             MysqlByteBufUtil.getLenencStringLength(getOrg_name().getBytes()) +
             MysqlByteBufUtil.getLenencIntegerLength(getLengthOfFixedFields()) +
-            2 +
-            4 +
-            1 +
-            2 +
-            1 +
-            2);
+            2 + // charset
+            4 + // column length
+            1 + // type
+            2 + // flags
+            1 + // decimals
+            2); // filler
     }
 
     public long getCharset() {

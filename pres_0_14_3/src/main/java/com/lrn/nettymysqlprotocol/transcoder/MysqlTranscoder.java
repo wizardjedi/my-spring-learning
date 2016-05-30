@@ -67,6 +67,8 @@ public class MysqlTranscoder {
         Packet packet;
 
         if (getContext().isCommandPhase()) {
+            logger.trace("Context in command phase");
+            
             int type = bb.readUnsignedByte();
 
             logger.debug("type:{}", type);
@@ -80,8 +82,12 @@ public class MysqlTranscoder {
             }
         } else {
             if (getContext().isAuthPhase()) {
+                logger.trace("Context in auth phase");
+                
                 packet = new LoginPacket();
             } else {
+                logger.trace("Undefined phase");
+                
                 return null;
             }
         }
@@ -94,7 +100,7 @@ public class MysqlTranscoder {
 
             return packet;
         } catch (Exception ex) {
-            System.out.println(""+ex);
+            logger.error("Error on read packet body", ex);
 
             return null;
         }

@@ -58,7 +58,6 @@ public class App {
                         
                         ch.pipeline().addLast(new DefaultServerHandler(transcoder));
                     }
-
                 })
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
