@@ -43,4 +43,9 @@ public class ComQueryPacket extends BasePacket {
 
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ComQueryPacket{" + "query=" + query + '}';
+    }
 }

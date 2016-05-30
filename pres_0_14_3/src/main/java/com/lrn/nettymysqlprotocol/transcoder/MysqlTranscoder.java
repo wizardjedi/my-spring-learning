@@ -94,7 +94,7 @@ public class MysqlTranscoder {
 
             return packet;
         } catch (Exception ex) {
-            System.out.println(""+ex);
+            logger.error("Error on read packet body", ex);
 
             return null;
         }

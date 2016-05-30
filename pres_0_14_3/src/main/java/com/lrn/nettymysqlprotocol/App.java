@@ -31,40 +31,12 @@ public class App {
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) throws Exception {
-                        logger.info("Client connected from:{}", ch.remoteAddress());
-
-                        ByteBuf greetingBuffer = ch.alloc().buffer();
-
-                        MysqlTranscoder transcoder = new MysqlTranscoder();
-                        
-                        transcoder.setContext(new TranscoderContext());
-                        
-                        transcoder.getContext().getCapabilities().setCapabilities(0x807ff7ff);
-                        transcoder.getContext().getServerStatus().setStatus(0x0002);
-                        
-                        InitialHandshakePacket greet = new InitialHandshakePacket();
-                        greet.setScramble("01234567890123456789".getBytes());
-                        greet.setCharacterSet(MysqlConstants.CharsetConstants.UTF8_GENERAL_CI);
-                        greet.setConnectionId(11);
-                        greet.setServerName("asdasd");
-                        greet.setSequenceNumber(0);
-                        
-                        transcoder.encode(greet, greetingBuffer);
-
-                        ch.writeAndFlush(greetingBuffer);
-                        
-                        ch.pipeline().addLast(new DefaultServerHandler(transcoder));
-                    }
-
-                })
+                .childHandler(new DefaultChannelInitializer())
                 .option(ChannelOption.SO_BACKLOG, 128)
                 .childOption(ChannelOption.SO_KEEPALIVE, true);
 
             ChannelFuture f = b.bind(port).sync();
-            
+
             f.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             logger.error("Error on create bootstrap", e);
