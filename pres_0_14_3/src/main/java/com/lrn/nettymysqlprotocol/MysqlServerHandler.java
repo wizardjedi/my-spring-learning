@@ -1,11 +1,12 @@
 package com.lrn.nettymysqlprotocol;
 
 import com.lrn.nettymysqlprotocol.server.ServerObject;
+import io.netty.channel.Channel;
 
 public interface MysqlServerHandler {
-    void onClientConnect();
+    void onClientConnect(Channel channel);
     
-    void onClientDisconnect();
+    void onClientDisconnect(Channel channel);
     
     void onLogin();
     

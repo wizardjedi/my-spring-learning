@@ -6,8 +6,11 @@ import com.lrn.nettymysqlprotocol.protocol.impl.InitialHandshakePacket;
 import com.lrn.nettymysqlprotocol.transcoder.MysqlTranscoder;
 import com.lrn.nettymysqlprotocol.transcoder.TranscoderContext;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +27,8 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
     public void initChannel(SocketChannel ch) throws Exception {
         logger.info("Client connected from:{}", ch.remoteAddress());
 
+        server.getHandler().onClientConnect(ch);
+        
         ByteBuf greetingBuffer = ch.alloc().buffer();
 
         MysqlTranscoder transcoder = new MysqlTranscoder();
@@ -48,6 +53,13 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
         authPhaseServerHandler.setServer(server);
         
         ch.pipeline().addLast(authPhaseServerHandler);
+                
+        ch.closeFuture().addListener(new GenericFutureListener() {
+            @Override
+            public void operationComplete(Future future) throws Exception {                                
+                server.getHandler().onClientDisconnect(ch);                
+            }
+        });
     }
 
     public MysqlServer getServer() {

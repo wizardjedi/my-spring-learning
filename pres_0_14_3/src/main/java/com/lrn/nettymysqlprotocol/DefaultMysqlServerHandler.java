@@ -1,6 +1,7 @@
 package com.lrn.nettymysqlprotocol;
 
 import com.lrn.nettymysqlprotocol.server.ServerObject;
+import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,19 +9,18 @@ public class DefaultMysqlServerHandler implements MysqlServerHandler {
 
     public static final Logger logger = LoggerFactory.getLogger(DefaultMysqlServerHandler.class);
     
+    protected Channel channel;
+    
     @Override
-    public void onClientConnect() {
-        // Return success on connect
+    public void onClientConnect(Channel channel) {
+        this.channel = channel;
         
-        // log event
-        throw new UnsupportedOperationException("Not supported yet.");
+        logger.debug("Client connect with channel {}", channel);
     }
 
     @Override
-    public void onClientDisconnect() {
-        // log event
-        
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void onClientDisconnect(Channel channel) {
+        logger.debug("Client disconnect with channel {}", channel);
     }
 
     @Override

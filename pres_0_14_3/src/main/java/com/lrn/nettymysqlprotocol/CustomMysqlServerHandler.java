@@ -10,6 +10,8 @@ public class CustomMysqlServerHandler extends DefaultMysqlServerHandler {
 
     public static final Logger logger = LoggerFactory.getLogger(CustomMysqlServerHandler.class);
     
+    
+    
     @Override
     public ServerObject onQuery(String query) { 
         logger.debug("-->{}", query);
@@ -21,9 +23,10 @@ public class CustomMysqlServerHandler extends DefaultMysqlServerHandler {
             
             rs.getColumns().add(new ResultSet.Column("id"));
             rs.getColumns().add(new ResultSet.Column("name"));
+            rs.getColumns().add(new ResultSet.Column("data"));
             
-            rs.getRows().add(new ResultSet.Row("1", "Value1"));
-            rs.getRows().add(new ResultSet.Row("2", "Value2"));
+            rs.getRows().add(new ResultSet.Row("1", "Value1","d1"));
+            rs.getRows().add(new ResultSet.Row("2", "Value2",null));
             
             return rs;
         } else {
