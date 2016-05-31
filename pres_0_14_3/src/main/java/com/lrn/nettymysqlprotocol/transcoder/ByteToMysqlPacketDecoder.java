@@ -13,8 +13,15 @@ public class ByteToMysqlPacketDecoder extends ByteToMessageDecoder {
 
     public static final Logger logger = LoggerFactory.getLogger(ByteToMysqlPacketDecoder.class);
     
-    public MysqlTranscoder transcoder = new MysqlTranscoder();
+    protected MysqlTranscoder transcoder = new MysqlTranscoder();
 
+    public ByteToMysqlPacketDecoder() {
+    }
+
+    public ByteToMysqlPacketDecoder(MysqlTranscoder transcoder) {
+        this.transcoder = transcoder;
+    }
+    
     @Override
     protected void decode(ChannelHandlerContext chc, ByteBuf bb, List<Object> list) throws Exception {
         Packet bp = transcoder.decode(bb);

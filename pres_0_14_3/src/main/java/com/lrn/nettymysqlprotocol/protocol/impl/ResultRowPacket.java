@@ -14,7 +14,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  * @see https://dev.mysql.com/doc/internals/en/com-query-response.html#packet-ProtocolText::ResultsetRow
  */
 public class ResultRowPacket extends BasePacket {
-    protected List<String> values;
+    protected List<String> values = new ArrayList<>();
 
     protected int columnCount;
 
@@ -46,8 +46,12 @@ public class ResultRowPacket extends BasePacket {
     public int calculateBodyLength(TranscoderContext context) {
         int length = 0;
 
-        for (String value:getValues()) {
-            length += MysqlByteBufUtil.getLenencStringLength(value.getBytes());
+        for (final String value:getValues()) {
+            if (value == null) {
+                length ++;
+            } else {
+                length += MysqlByteBufUtil.getLenencStringLength(value.getBytes());
+            }
         }
 
         return length;

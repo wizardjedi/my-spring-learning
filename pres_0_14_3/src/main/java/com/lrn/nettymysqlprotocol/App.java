@@ -1,18 +1,5 @@
 package com.lrn.nettymysqlprotocol;
 
-import com.lrn.nettymysqlprotocol.protocol.MysqlConstants;
-import com.lrn.nettymysqlprotocol.protocol.impl.InitialHandshakePacket;
-import com.lrn.nettymysqlprotocol.transcoder.MysqlTranscoder;
-import com.lrn.nettymysqlprotocol.transcoder.TranscoderContext;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,26 +12,10 @@ public class App {
     public static void main(String[] args) {
         logger.info("Application start");
 
-        EventLoopGroup bossGroup = new NioEventLoopGroup();
-        EventLoopGroup workerGroup = new NioEventLoopGroup();
-        try {
-            ServerBootstrap b = new ServerBootstrap();
-            b.group(bossGroup, workerGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new DefaultChannelInitializer())
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
-
-            ChannelFuture f = b.bind(port).sync();
-
-            f.channel().closeFuture().sync();
-        } catch (InterruptedException e) {
-            logger.error("Error on create bootstrap", e);
-        } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
-        }
-
+        MysqlServer mysqlServer = new MysqlServer(port);
+        mysqlServer.setHandler(new CustomMysqlServerHandler());
+        mysqlServer.run();
+        
         logger.info("Application shutted down");
     }
 }

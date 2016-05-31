@@ -1,5 +1,6 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.server.ServerObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,10 +32,10 @@ public class DefaultMysqlServerHandler implements MysqlServerHandler {
     }
 
     @Override
-    public void onQuery() {
-        // check query
+    public ServerObject onQuery(String query) {
+        logger.info("Got query:{}", query);
         
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
     
 }

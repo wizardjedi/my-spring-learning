@@ -1,7 +1,5 @@
 package com.lrn.nettymysqlprotocol.transcoder;
 
-import com.lrn.nettymysqlprotocol.DefaultServerHandler;
-import com.lrn.nettymysqlprotocol.protocol.BasePacket;
 import com.lrn.nettymysqlprotocol.protocol.Packet;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -13,8 +11,20 @@ public class MysqlPacketToByteEncoder extends MessageToByteEncoder<Packet> {
 
     public static final Logger logger = LoggerFactory.getLogger(MysqlPacketToByteEncoder.class);
     
-    public MysqlTranscoder transcoder = new MysqlTranscoder();
+    protected MysqlTranscoder transcoder = new MysqlTranscoder();
 
+    public MysqlPacketToByteEncoder(MysqlTranscoder transcoder) {
+        this.transcoder = transcoder;
+    }
+    
+    public MysqlTranscoder getTranscoder() {
+        return transcoder;
+    }
+
+    public void setTranscoder(MysqlTranscoder transcoder) {
+        this.transcoder = transcoder;
+    }
+    
     @Override
     protected void encode(ChannelHandlerContext ctx, Packet msg, ByteBuf out) throws Exception {
         if (msg instanceof Packet) {

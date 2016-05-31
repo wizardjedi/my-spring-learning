@@ -1,11 +1,13 @@
 package com.lrn.nettymysqlprotocol.server;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ResultSet implements ServerObject {
-    protected List<Column> columns;
+    protected List<Column> columns = new ArrayList<>();
     
-    protected List<Value> values;
+    protected List<Row> rows = new ArrayList<>();
 
     public List<Column> getColumns() {
         return columns;
@@ -15,12 +17,41 @@ public class ResultSet implements ServerObject {
         this.columns = columns;
     }
 
-    public List<Value> getValues() {
-        return values;
+    public List<Row> getRows() {
+        return rows;
     }
 
-    public void setValues(List<Value> values) {
-        this.values = values;
+    public void setRows(List<Row> rows) {
+        this.rows = rows;
+    }
+
+    public static class Row {
+        protected List<Value> values = new ArrayList<>();
+
+        public Row() {
+        }
+
+        public Row(Object... values) {
+            Value[] tmpValues = new Value[values.length];
+            
+            for (int i=0;i<values.length;i++) {
+                tmpValues[i] = new Value(values[i]);
+            }
+            
+            this.values = Arrays.asList(tmpValues);
+        }
+        
+        public Row(Value... values) {
+            this.values = Arrays.asList(values);
+        }
+        
+        public List<Value> getValues() {
+            return values;
+        }
+
+        public void setValues(List<Value> values) {
+            this.values = values;
+        }
     }
     
     public static class Column {

@@ -12,8 +12,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel> {
-    public static final Logger logger = LoggerFactory.getLogger(App.class);
+    public static final Logger logger = LoggerFactory.getLogger(DefaultChannelInitializer.class);
 
+    protected MysqlServer server;
+
+    public DefaultChannelInitializer(MysqlServer server) {
+        this.server = server;
+    }
+    
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
         logger.info("Client connected from:{}", ch.remoteAddress());
@@ -38,6 +44,17 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
 
         ch.writeAndFlush(greetingBuffer);
 
-        ch.pipeline().addLast(new DefaultServerHandler(transcoder));
+        AuthPhaseServerHandler authPhaseServerHandler = new AuthPhaseServerHandler(transcoder);        
+        authPhaseServerHandler.setServer(server);
+        
+        ch.pipeline().addLast(authPhaseServerHandler);
+    }
+
+    public MysqlServer getServer() {
+        return server;
+    }
+
+    public void setServer(MysqlServer server) {
+        this.server = server;
     }
 }

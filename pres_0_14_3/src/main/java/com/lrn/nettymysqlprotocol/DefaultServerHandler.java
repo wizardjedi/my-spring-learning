@@ -1,6 +1,9 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.impl.ComQueryPacket;
 import com.lrn.nettymysqlprotocol.protocol.impl.OkPacket;
+import com.lrn.nettymysqlprotocol.server.ServerObject;
+import com.lrn.nettymysqlprotocol.server.ServerObjectException;
 import com.lrn.nettymysqlprotocol.transcoder.MysqlTranscoder;
 import com.lrn.nettymysqlprotocol.transcoder.TranscoderContext;
 import io.netty.buffer.ByteBuf;
@@ -16,6 +19,8 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
 
     protected MysqlTranscoder transcoder = null;
     
+    protected MysqlServerHandler handler;
+    
     public DefaultServerHandler(MysqlTranscoder transcoder) {
         this.transcoder = transcoder;
     }    
@@ -24,30 +29,17 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         logger.debug("channel read");
 
-        ByteBuf byteBuf = (ByteBuf)msg;
-
-        if (logger.isTraceEnabled()) {
-            logger.trace("\n{}", ByteBufUtil.prettyHexDump(byteBuf));
+        logger.debug("Read msg {}", msg);
+                
+        if (msg instanceof ComQueryPacket) {
+            try {
+                ServerObject serverObject = handler.onQuery(((ComQueryPacket) msg).getQuery());
+                       
+                ctx.channel().writeAndFlush(serverObject);
+            } catch (ServerObjectException e) {
+                ctx.channel().writeAndFlush(e);
+            }
         }
-
-        OkPacket okPacket = new OkPacket();
-        okPacket.setAffectedRows(0);
-
-        okPacket.setSequenceNumber(2);
-        
-        ByteBuf buffer = ctx.alloc().buffer();
-        
-        try {
-            transcoder.encode(okPacket, buffer);
-        } catch (Exception e) {
-            
-        }
-        
-        logger.trace("\n{}", ByteBufUtil.prettyHexDump(buffer));
-        
-        ctx.writeAndFlush(buffer);
-        
-        ((ByteBuf) msg).release();
     }
 
     @Override
@@ -57,4 +49,22 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
         ctx.close();
     }
+
+    public MysqlTranscoder getTranscoder() {
+        return transcoder;
+    }
+
+    public void setTranscoder(MysqlTranscoder transcoder) {
+        this.transcoder = transcoder;
+    }
+
+    public MysqlServerHandler getHandler() {
+        return handler;
+    }
+
+    public void setHandler(MysqlServerHandler handler) {
+        this.handler = handler;
+    }
+    
+    
 }
