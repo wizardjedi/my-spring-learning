@@ -1,13 +1,10 @@
 package com.lrn.nettymysqlprotocol;
 
+import com.lrn.nettymysqlprotocol.protocol.impl.ComInitDbPacket;
 import com.lrn.nettymysqlprotocol.protocol.impl.ComQueryPacket;
-import com.lrn.nettymysqlprotocol.protocol.impl.OkPacket;
 import com.lrn.nettymysqlprotocol.server.ServerObject;
 import com.lrn.nettymysqlprotocol.server.ServerObjectException;
 import com.lrn.nettymysqlprotocol.transcoder.MysqlTranscoder;
-import com.lrn.nettymysqlprotocol.transcoder.TranscoderContext;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import org.slf4j.Logger;
@@ -34,6 +31,16 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof ComQueryPacket) {
             try {
                 ServerObject serverObject = handler.onQuery(((ComQueryPacket) msg).getQuery());
+                       
+                ctx.channel().writeAndFlush(serverObject);
+            } catch (ServerObjectException e) {
+                ctx.channel().writeAndFlush(e);
+            }
+        }
+        
+        if (msg instanceof ComInitDbPacket) {
+            try {
+                ServerObject serverObject = handler.initDb(((ComInitDbPacket) msg).getSchemaName());
                        
                 ctx.channel().writeAndFlush(serverObject);
             } catch (ServerObjectException e) {

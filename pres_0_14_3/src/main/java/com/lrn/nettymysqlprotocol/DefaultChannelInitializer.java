@@ -11,12 +11,18 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel> {
     public static final Logger logger = LoggerFactory.getLogger(DefaultChannelInitializer.class);
 
+    protected final static Random random = new Random();
+    
+    protected final static AtomicLong connectionId = new AtomicLong(0);
+    
     protected MysqlServer server;
 
     public DefaultChannelInitializer(MysqlServer server) {
@@ -39,10 +45,18 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
         transcoder.getContext().getServerStatus().setStatus(0x0002);
 
         InitialHandshakePacket greet = new InitialHandshakePacket();
-        greet.setScramble("01234567890123456789".getBytes());
+        
+        random.setSeed(System.currentTimeMillis());
+        
+        byte[] scramble = new byte[20];
+        
+        random.nextBytes(scramble);
+        
+        greet.setScramble(scramble);
         greet.setCharacterSet(MysqlConstants.CharsetConstants.UTF8_GENERAL_CI);
-        greet.setConnectionId(11);
-        greet.setServerName("asdasd");
+                        
+        greet.setConnectionId(connectionId.incrementAndGet());
+        greet.setServerName(getServer().getServerDesription());
         greet.setSequenceNumber(0);
 
         transcoder.encode(greet, greetingBuffer);

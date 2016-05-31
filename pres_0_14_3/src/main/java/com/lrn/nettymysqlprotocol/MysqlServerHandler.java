@@ -3,6 +3,10 @@ package com.lrn.nettymysqlprotocol;
 import com.lrn.nettymysqlprotocol.server.ServerObject;
 import io.netty.channel.Channel;
 
+/**
+ * 
+ * @TODO: devide to connection handler and server handler
+ */
 public interface MysqlServerHandler {
     void onClientConnect(Channel channel);
     
@@ -11,4 +15,6 @@ public interface MysqlServerHandler {
     void onLogin();
     
     ServerObject onQuery(String query);
+    
+    ServerObject initDb(String schemaName);
 }

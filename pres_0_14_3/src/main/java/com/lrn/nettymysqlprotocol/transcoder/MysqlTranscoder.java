@@ -3,6 +3,7 @@ package com.lrn.nettymysqlprotocol.transcoder;
 import com.lrn.nettymysqlprotocol.protocol.MysqlByteBufUtil;
 import com.lrn.nettymysqlprotocol.protocol.MysqlConstants;
 import com.lrn.nettymysqlprotocol.protocol.Packet;
+import com.lrn.nettymysqlprotocol.protocol.impl.ComInitDbPacket;
 import com.lrn.nettymysqlprotocol.protocol.impl.ComQueryPacket;
 import com.lrn.nettymysqlprotocol.protocol.impl.ComQuitPacket;
 import com.lrn.nettymysqlprotocol.protocol.impl.InitialHandshakePacket;
@@ -73,7 +74,7 @@ public class MysqlTranscoder {
             
             int type = bb.readUnsignedByte();
 
-            logger.debug("type:{}", type);
+            logger.debug("Packet type id:{}", type);
 
             switch (type) {
                 case MysqlConstants.CommandConstants.COM_QUERY:
@@ -82,6 +83,9 @@ public class MysqlTranscoder {
                 case MysqlConstants.CommandConstants.COM_QUIT:
                     packet = new ComQuitPacket();
                     break;
+                case MysqlConstants.CommandConstants.COM_INIT_DB:
+                    packet = new ComInitDbPacket();
+                    break;                 
                 default:
                     return null;
             }

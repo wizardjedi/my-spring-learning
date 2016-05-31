@@ -1,6 +1,7 @@
 package com.lrn.nettymysqlprotocol;
 
 import com.lrn.nettymysqlprotocol.server.ServerObject;
+import com.lrn.nettymysqlprotocol.server.Success;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,17 @@ public class DefaultMysqlServerHandler implements MysqlServerHandler {
         logger.info("Got query:{}", query);
         
         return null;
+    }
+
+    @Override
+    public ServerObject initDb(String schemaName) {
+        
+        logger.info("Got init db:{}", schemaName);
+        
+        Success success = new Success();
+        success.setInfo("Database changed");                    
+
+        return success;                    
     }
     
 }

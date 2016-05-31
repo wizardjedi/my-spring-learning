@@ -3,6 +3,7 @@ package com.lrn.nettymysqlprotocol;
 import com.lrn.nettymysqlprotocol.server.ResultSet;
 import com.lrn.nettymysqlprotocol.server.ServerObject;
 import com.lrn.nettymysqlprotocol.server.ServerObjectException;
+import com.lrn.nettymysqlprotocol.server.Success;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,4 +39,25 @@ public class CustomMysqlServerHandler extends DefaultMysqlServerHandler {
             throw soe;
         }
     }    
+
+    @Override
+    public ServerObject initDb(String schemaName) {
+        logger.info("Change db to:'{}'", schemaName);
+        
+        if ("test".equals(schemaName)) {
+            Success success = new Success();
+            success.setInfo("Database changed");                    
+
+            return success;
+        } else {
+            ServerObjectException soe = new ServerObjectException();
+            soe.setErrorCode(2);
+            soe.setSqlState("HY00");
+            soe.setErrorMessage("Database not found.");
+            
+            throw soe;
+        }
+    }
+    
+    
 }

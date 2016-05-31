@@ -11,6 +11,7 @@ import com.lrn.nettymysqlprotocol.protocol.impl.ResultSetPacket;
 import com.lrn.nettymysqlprotocol.server.ResultSet;
 import com.lrn.nettymysqlprotocol.server.ServerObject;
 import com.lrn.nettymysqlprotocol.server.ServerObjectException;
+import com.lrn.nettymysqlprotocol.server.Success;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class ServerObjectToPacketEncoder extends MessageToMessageEncoder<ServerO
             errPacket.setSequenceNumber(1);
                         
             list.add(errPacket);
+        }
+        
+        if (serverObject instanceof Success) {
+            list.add(processSuccess((Success) serverObject));
         }
     }
     
@@ -105,5 +110,18 @@ public class ServerObjectToPacketEncoder extends MessageToMessageEncoder<ServerO
         resultList.add(eof2);
         
         return resultList;
+    }
+
+    protected Packet processSuccess(Success success) {
+        OkPacket okPacket = new OkPacket();
+        
+        okPacket.setHumanReadableStatus(success.getInfo());
+        okPacket.setAffectedRows(success.getAffectedRows());
+        okPacket.setWarningCount(success.getWarnings());
+        okPacket.setLastInsertId(success.getLastInsertId());
+        
+        okPacket.setSequenceNumber(1);        
+        
+        return okPacket;
     }
 }
