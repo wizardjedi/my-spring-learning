@@ -9,7 +9,8 @@ public abstract class BasePacket implements Packet {
 
     protected int bodyLength = 0;
     protected int sequenceNumber = 0;
-
+    protected boolean sequenceSetted = false;
+        
     public BasePacket() {
     }
 
@@ -43,6 +44,12 @@ public abstract class BasePacket implements Packet {
 
     @Override
     public void setSequenceNumber(int sequenceNumber) {
+        sequenceSetted = true;
+        
         this.sequenceNumber = sequenceNumber;
+    }
+
+    public boolean isSequenceSetted() {
+        return sequenceSetted;
     }
 }

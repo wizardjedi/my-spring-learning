@@ -11,6 +11,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
@@ -19,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel> {
     public static final Logger logger = LoggerFactory.getLogger(DefaultChannelInitializer.class);
 
-    protected final static Random random = new Random();
+    protected final static Random random = new SecureRandom();
     
     protected final static AtomicLong connectionId = new AtomicLong(0);
     
@@ -67,7 +68,7 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
         authPhaseServerHandler.setServer(server);
         
         ch.pipeline().addLast(authPhaseServerHandler);
-                
+           
         ch.closeFuture().addListener(new GenericFutureListener() {
             @Override
             public void operationComplete(Future future) throws Exception {                                
