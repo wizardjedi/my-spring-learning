@@ -1,0 +1,32 @@
+<?php
+
+include("vendor/autoload.php");
+
+class tbl1 extends Zend_Db_Table_Abstract
+{
+    protected $_cols = array('id','name','data'); 
+}
+
+$db = Zend_Db::factory('PDO_MYSQL', array(
+    'host'     => '127.0.0.1',
+    'port'     => 1234,
+    'username' => 'who_cares',
+    'password' => 'who_cares',
+    'dbname'   => 'test'
+));
+Zend_Db_Table_Abstract::setDefaultAdapter($db);
+ 
+$data = $db->fetchAll("select * from tbl1"); 
+var_dump($data); 
+
+
+$select = $db->select()->from('tbl1');
+$data = $db->query($select)->fetchAll();
+var_dump($data); 
+
+
+ /*
+$table = new tbl1();
+
+$data = $table->fetchAll();
+var_dump($data);*/
