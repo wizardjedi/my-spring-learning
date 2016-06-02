@@ -21,6 +21,8 @@ public class AuthPhaseServerHandler extends ChannelInboundHandlerAdapter {
     
     protected MysqlServer server;
     
+    protected MysqlConnectionHandler connectionHandler;
+    
     public AuthPhaseServerHandler(MysqlTranscoder transcoder) {
         this.transcoder = transcoder;
     }    
@@ -60,7 +62,8 @@ public class AuthPhaseServerHandler extends ChannelInboundHandlerAdapter {
         // inbound handlers
         ctx.pipeline().addFirst(new ByteToMysqlPacketDecoder(transcoder));
         DefaultServerHandler defaultServerHandler = new DefaultServerHandler(transcoder);
-        defaultServerHandler.setHandler(getServer().getHandler());
+        defaultServerHandler.setServerHandler(getServer().getServerHandler());
+        defaultServerHandler.setConnectionHandler(getConnectionHandler());
         
         ctx.pipeline().addLast(defaultServerHandler);
         
@@ -91,5 +94,13 @@ public class AuthPhaseServerHandler extends ChannelInboundHandlerAdapter {
 
     public void setServer(MysqlServer server) {
         this.server = server;
+    }
+
+    public MysqlConnectionHandler getConnectionHandler() {
+        return connectionHandler;
+    }
+
+    public void setConnectionHandler(MysqlConnectionHandler connectionHandler) {
+        this.connectionHandler = connectionHandler;
     }
 }

@@ -10,9 +10,7 @@ import org.slf4j.LoggerFactory;
 public class CustomMysqlServerHandler extends DefaultMysqlServerHandler {
 
     public static final Logger logger = LoggerFactory.getLogger(CustomMysqlServerHandler.class);
-    
-    
-    
+        
     @Override
     public ServerObject onQuery(String query) { 
         logger.debug("-->{}", query);

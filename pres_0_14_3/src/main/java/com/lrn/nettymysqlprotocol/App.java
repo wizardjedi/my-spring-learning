@@ -13,7 +13,7 @@ public class App {
         logger.info("Application start");
 
         MysqlServer mysqlServer = new MysqlServer(port);
-        mysqlServer.setHandler(new CustomMysqlServerHandler());
+        mysqlServer.setServerHandler(new CustomMysqlServerHandler());
         mysqlServer.run();
         
         logger.info("Application shutted down");

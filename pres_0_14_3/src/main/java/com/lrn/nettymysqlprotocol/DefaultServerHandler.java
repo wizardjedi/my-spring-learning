@@ -16,7 +16,9 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
 
     protected MysqlTranscoder transcoder = null;
     
-    protected MysqlServerHandler handler;
+    protected MysqlServerHandler serverHandler;
+    
+    protected MysqlConnectionHandler connectionHandler;
     
     public DefaultServerHandler(MysqlTranscoder transcoder) {
         this.transcoder = transcoder;
@@ -30,7 +32,7 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
                 
         if (msg instanceof ComQueryPacket) {
             try {
-                ServerObject serverObject = handler.onQuery(((ComQueryPacket) msg).getQuery());
+                ServerObject serverObject = connectionHandler.onQuery(((ComQueryPacket) msg).getQuery());
                        
                 ctx.channel().writeAndFlush(serverObject);
             } catch (ServerObjectException e) {
@@ -40,7 +42,7 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
         
         if (msg instanceof ComInitDbPacket) {
             try {
-                ServerObject serverObject = handler.initDb(((ComInitDbPacket) msg).getSchemaName());
+                ServerObject serverObject = connectionHandler.initDb(((ComInitDbPacket) msg).getSchemaName());
                        
                 ctx.channel().writeAndFlush(serverObject);
             } catch (ServerObjectException e) {
@@ -65,13 +67,19 @@ public class DefaultServerHandler extends ChannelInboundHandlerAdapter {
         this.transcoder = transcoder;
     }
 
-    public MysqlServerHandler getHandler() {
-        return handler;
+    public MysqlServerHandler getServerHandler() {
+        return serverHandler;
     }
 
-    public void setHandler(MysqlServerHandler handler) {
-        this.handler = handler;
+    public void setServerHandler(MysqlServerHandler serverHandler) {
+        this.serverHandler = serverHandler;
     }
-    
-    
+
+    public MysqlConnectionHandler getConnectionHandler() {
+        return connectionHandler;
+    }
+
+    public void setConnectionHandler(MysqlConnectionHandler connectionHandler) {
+        this.connectionHandler = connectionHandler;
+    }
 }

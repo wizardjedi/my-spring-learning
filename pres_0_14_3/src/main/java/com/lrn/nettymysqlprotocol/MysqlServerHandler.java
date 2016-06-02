@@ -8,13 +8,9 @@ import io.netty.channel.Channel;
  * @TODO: devide to connection handler and server handler
  */
 public interface MysqlServerHandler {
-    void onClientConnect(Channel channel);
+    MysqlConnectionHandler onClientConnect(Channel channel);
     
     void onClientDisconnect(Channel channel);
     
     void onLogin();
-    
-    ServerObject onQuery(String query);
-    
-    ServerObject initDb(String schemaName);
 }

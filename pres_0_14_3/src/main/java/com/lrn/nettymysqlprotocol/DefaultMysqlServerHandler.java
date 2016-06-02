@@ -6,17 +6,19 @@ import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DefaultMysqlServerHandler implements MysqlServerHandler {
+public class DefaultMysqlServerHandler implements MysqlServerHandler, MysqlConnectionHandler {
 
     public static final Logger logger = LoggerFactory.getLogger(DefaultMysqlServerHandler.class);
     
     protected Channel channel;
     
     @Override
-    public void onClientConnect(Channel channel) {
+    public MysqlConnectionHandler onClientConnect(Channel channel) {
         this.channel = channel;
         
         logger.debug("Client connect with channel {}", channel);
+        
+        return this;
     }
 
     @Override

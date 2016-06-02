@@ -15,7 +15,7 @@ public class MysqlServer {
     protected EventLoopGroup bossGroup;
     protected EventLoopGroup workerGroup;
     protected int port = 3306;
-    protected MysqlServerHandler handler;
+    protected MysqlServerHandler serverHandler;
     protected String serverName = "AMCF(A1S MySQL connection framework)";
     protected String version = "0.0.1";
     
@@ -98,11 +98,11 @@ public class MysqlServer {
         this.workerGroup = workerGroup;
     }
 
-    public MysqlServerHandler getHandler() {
-        return handler;
+    public MysqlServerHandler getServerHandler() {
+        return serverHandler;
     }
 
-    public void setHandler(MysqlServerHandler handler) {
-        this.handler = handler;
+    public void setServerHandler(MysqlServerHandler serverHandler) {
+        this.serverHandler = serverHandler;
     }    
 }

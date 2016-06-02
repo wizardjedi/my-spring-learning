@@ -34,7 +34,7 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
     public void initChannel(SocketChannel ch) throws Exception {
         logger.info("Client connected from:{}", ch.remoteAddress());
 
-        server.getHandler().onClientConnect(ch);
+        MysqlConnectionHandler connectionHandler = server.getServerHandler().onClientConnect(ch);
         
         ByteBuf greetingBuffer = ch.alloc().buffer();
 
@@ -67,12 +67,14 @@ public class DefaultChannelInitializer extends ChannelInitializer<SocketChannel>
         AuthPhaseServerHandler authPhaseServerHandler = new AuthPhaseServerHandler(transcoder);        
         authPhaseServerHandler.setServer(server);
         
+        authPhaseServerHandler.setConnectionHandler(connectionHandler);
+        
         ch.pipeline().addLast(authPhaseServerHandler);
            
         ch.closeFuture().addListener(new GenericFutureListener() {
             @Override
             public void operationComplete(Future future) throws Exception {                                
-                server.getHandler().onClientDisconnect(ch);                
+                server.getServerHandler().onClientDisconnect(ch);                
             }
         });
     }
