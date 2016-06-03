@@ -19,14 +19,15 @@ Zend_Db_Table_Abstract::setDefaultAdapter($db);
 $data = $db->fetchAll("select * from tbl1"); 
 var_dump($data); 
 
-
+/*
 $select = $db->select()->from('tbl1');
 $data = $db->query($select)->fetchAll();
 var_dump($data); 
+*/
 
-
- /*
 $table = new tbl1();
 
+$table->insert(array('field1'=>123,));
+
 $data = $table->fetchAll();
-var_dump($data);*/
+var_dump($data);
