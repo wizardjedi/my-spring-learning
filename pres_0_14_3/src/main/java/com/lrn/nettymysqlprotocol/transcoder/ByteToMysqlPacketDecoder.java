@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class ByteToMysqlPacketDecoder extends ByteToMessageDecoder {
 
     public static final Logger logger = LoggerFactory.getLogger(ByteToMysqlPacketDecoder.class);
-    
+
     protected MysqlTranscoder transcoder = new MysqlTranscoder();
 
     public ByteToMysqlPacketDecoder() {
@@ -21,7 +21,7 @@ public class ByteToMysqlPacketDecoder extends ByteToMessageDecoder {
     public ByteToMysqlPacketDecoder(MysqlTranscoder transcoder) {
         this.transcoder = transcoder;
     }
-    
+
     @Override
     protected void decode(ChannelHandlerContext chc, ByteBuf bb, List<Object> list) throws Exception {
         Packet bp = transcoder.decode(bb);
@@ -30,5 +30,4 @@ public class ByteToMysqlPacketDecoder extends ByteToMessageDecoder {
             list.add(bp);
         }
     }
-
 }

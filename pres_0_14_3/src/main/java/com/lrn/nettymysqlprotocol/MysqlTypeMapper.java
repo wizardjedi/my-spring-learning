@@ -6,17 +6,21 @@ public class MysqlTypeMapper {
     public static int getMysqlType(int value) {
         return MysqlConstants.TypesConstants.MYSQL_TYPE_LONG;
     }
-    
+
     public static int getMysqlType(Integer value) {
         return MysqlConstants.TypesConstants.MYSQL_TYPE_LONG;
     }
-    
+
     public static int getMysqlType(String value) {
         return MysqlConstants.TypesConstants.MYSQL_TYPE_STRING;
     }
-    
+
+    public static int getMysqlType(byte[] value) {
+        return MysqlConstants.TypesConstants.MYSQL_TYPE_BLOB;
+    }
+
     /*
-    
+
     MYSQL_TYPE_DECIMAL 	0x00 	Implemented by ProtocolBinary::MYSQL_TYPE_DECIMAL (https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_DECIMAL)
     MYSQL_TYPE_TINY 	0x01 	Implemented by ProtocolBinary::MYSQL_TYPE_TINY (https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_TINY)
     MYSQL_TYPE_SHORT 	0x02 	Implemented by ProtocolBinary::MYSQL_TYPE_SHORT (https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_SHORT)
@@ -46,8 +50,8 @@ public class MysqlTypeMapper {
     MYSQL_TYPE_BLOB 	0xfc 	Implemented by ProtocolBinary::MYSQL_TYPE_BLOB (https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_BLOB)
     MYSQL_TYPE_VAR_STRING 	0xfd 	Implemented by ProtocolBinary::MYSQL_TYPE_VAR_STRING (https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_VAR_STRING)
     MYSQL_TYPE_STRING 	0xfe 	Implemented by ProtocolBinary::MYSQL_TYPE_STRING (https://dev.mysql.com/doc/internals/en/binary-protocol-value.html#packet-ProtocolBinary::MYSQL_TYPE_STRING)
-    MYSQL_TYPE_GEOMETRY 	0xff 	 
-    
-    
+    MYSQL_TYPE_GEOMETRY 	0xff
+
+
     */
 }

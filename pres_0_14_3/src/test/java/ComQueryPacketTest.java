@@ -63,5 +63,4 @@ public class ComQueryPacketTest {
 
         assertEquals(expected.toLowerCase(), hexBuf.toLowerCase());
     }
-
 }

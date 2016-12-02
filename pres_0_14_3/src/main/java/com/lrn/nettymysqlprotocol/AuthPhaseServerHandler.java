@@ -9,7 +9,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.ByteToMessageDecoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,15 +17,15 @@ public class AuthPhaseServerHandler extends ChannelInboundHandlerAdapter {
     public static final Logger logger = LoggerFactory.getLogger(AuthPhaseServerHandler.class);
 
     protected MysqlTranscoder transcoder = null;
-    
+
     protected MysqlServer server;
-    
+
     protected MysqlConnectionHandler connectionHandler;
-    
+
     public AuthPhaseServerHandler(MysqlTranscoder transcoder) {
         this.transcoder = transcoder;
-    }    
-    
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         logger.debug("channel read");
@@ -40,33 +39,33 @@ public class AuthPhaseServerHandler extends ChannelInboundHandlerAdapter {
         OkPacket okPacket = new OkPacket();
         okPacket.setAffectedRows(0);
         okPacket.setSequenceNumber(2);
-        
+
         ByteBuf buffer = ctx.alloc().buffer();
-        
+
         try {
             transcoder.encode(okPacket, buffer);
         } catch (Exception e) {
-            
+
         }
-        
+
         logger.trace("\n{}", ByteBufUtil.prettyHexDump(buffer));
-        
+
         ctx.writeAndFlush(buffer);
-        
+
         ((ByteBuf) msg).release();
-        
+
         ctx.pipeline().remove(this);
-        
+
         transcoder.getContext().setCommandPhase();
-        
+
         // inbound handlers
         ctx.pipeline().addFirst(new ByteToMysqlPacketDecoder(transcoder));
         DefaultServerHandler defaultServerHandler = new DefaultServerHandler(transcoder);
         defaultServerHandler.setServerHandler(getServer().getServerHandler());
         defaultServerHandler.setConnectionHandler(getConnectionHandler());
-        
+
         ctx.pipeline().addLast(defaultServerHandler);
-        
+
         // out bound handlers
         ctx.pipeline().addFirst(new MysqlPacketToByteEncoder(transcoder));
         ctx.pipeline().addLast(new ServerObjectToPacketEncoder(transcoder));
