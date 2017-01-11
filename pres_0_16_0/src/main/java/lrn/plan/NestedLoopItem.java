@@ -1,6 +1,8 @@
 package lrn.plan;
 
 import java.util.ArrayList;
+import lrn.operation.Operation;
+import lrn.operation.ValueResolver;
 import lrn.recordset.RecordSet;
 import lrn.recordset.Row;
 
@@ -8,7 +10,9 @@ public class NestedLoopItem implements PlanItem {
 
     protected PlanItem left;
     protected PlanItem right;
-
+    protected ValueResolver leftResolver;
+    protected ValueResolver rightResolver;
+    
     protected boolean lastRecordSet = true;
 
     public static NestedLoopItem create(PlanItem left, PlanItem right) {
@@ -28,9 +32,6 @@ public class NestedLoopItem implements PlanItem {
             RecordSet rs1 = left.fetchResultRecordSet();
             RecordSet rs2 = right.fetchResultRecordSet();
 
-            System.out.println("+++"+rs1);
-            System.out.println("+++"+rs2);
-            
             RecordSet resultRecordSet = new RecordSet();
 
             resultRecordSet.setColumns(new ArrayList<>());
@@ -39,13 +40,18 @@ public class NestedLoopItem implements PlanItem {
 
             for (Row row1 : rs1.getRows()) {
                 for (Row row2 : rs2.getRows()) {
-                    Row r = new Row();
-                    r.setValues(new ArrayList<>());
+                    if (
+                        leftResolver == null 
+                        || leftResolver.resolve(row1).equals(rightResolver.resolve(row2))
+                    ) {
+                        Row r = new Row();
+                        r.setValues(new ArrayList<>());
 
-                    r.getValues().addAll(row1.getValues());
-                    r.getValues().addAll(row2.getValues());
-                    
-                    resultRecordSet.addRow(r);
+                        r.getValues().addAll(row1.getValues());
+                        r.getValues().addAll(row2.getValues());
+
+                        resultRecordSet.addRow(r);
+                    }
                 }
             }
 
@@ -74,4 +80,19 @@ public class NestedLoopItem implements PlanItem {
         this.right = right;
     }
 
+    public ValueResolver getLeftResolver() {
+        return leftResolver;
+    }
+
+    public void setLeftResolver(ValueResolver leftResolver) {
+        this.leftResolver = leftResolver;
+    }
+
+    public ValueResolver getRightResolver() {
+        return rightResolver;
+    }
+
+    public void setRightResolver(ValueResolver rightResolver) {
+        this.rightResolver = rightResolver;
+    }
 }

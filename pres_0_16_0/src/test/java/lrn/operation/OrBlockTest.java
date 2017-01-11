@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class OrBlockTest {
-    @Test
+    /*@Test
     public void testTrue() {
         OrBlock orBlock = new OrBlock();
         
@@ -43,5 +43,5 @@ public class OrBlockTest {
         
         assertEquals(false, orBlock.getResult());
     }
-    
+    */
 }

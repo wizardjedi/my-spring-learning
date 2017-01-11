@@ -1,11 +1,11 @@
 package lrn.plan;
 
-import lrn.recordset.RecordSet;
+import lrn.operation.ColumnValue;
+import lrn.operation.ConstValue;
+import lrn.operation.LikeOperation;
 import org.junit.Test;
 
 public class FetchTableRowItemTest {
-    
-    
     @Test
     public void testFetchResultRecordSet() {
         FetchTableRowItem item = new FetchTableRowItem("src/main/resources/data/", "person");
@@ -35,6 +35,26 @@ public class FetchTableRowItemTest {
         
         NestedLoopItem nlp = NestedLoopItem.create(li, li2);
         
+        nlp.setLeftResolver(new ColumnValue(item.getTable().getColumns(), "department_id"));
+        
+        nlp.setRightResolver(new ColumnValue(item2.getTable().getColumns(), "id"));
+        
         System.err.println("Nlp="+nlp.fetchResultRecordSet());
-    }  
+    }
+    
+    @Test
+    public void testFetchResultRecordSet3() {
+        FetchTableRowItem item = new FetchTableRowItem("src/main/resources/data/", "task");
+        
+        FilterItem fi = 
+            new FilterItem(
+                new LikeOperation(
+                        new ColumnValue(item.getTable().getColumns(), "status"),
+                        new ConstValue("3")
+                ), 
+                item
+            );
+        
+        System.out.println("Filter="+ fi.fetchResultRecordSet());
+    }
 }
