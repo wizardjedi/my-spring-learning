@@ -1,0 +1,5 @@
+id;int
+person_id;int
+text;string
+status;int
+create_date;string

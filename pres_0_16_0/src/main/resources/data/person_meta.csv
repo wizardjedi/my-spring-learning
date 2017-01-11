@@ -1,0 +1,5 @@
+id;int
+name;string
+surname;string
+department_id;int
+create_date;string

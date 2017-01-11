@@ -1,6 +1,6 @@
 package lrn.plan;
 
-public class CompositeItem {
+public abstract class CompositeItem implements PlanItem {
     protected PlanItem innerItem;
 
     public CompositeItem() {
@@ -16,5 +16,10 @@ public class CompositeItem {
 
     public void setInnerItem(PlanItem innerItem) {
         this.innerItem = innerItem;
+    }
+
+    @Override
+    public boolean isStreamItem() {
+        return innerItem.isStreamItem();
     }
 }

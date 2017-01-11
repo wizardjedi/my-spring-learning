@@ -18,29 +18,29 @@ import org.supercsv.prefs.CsvPreference;
 public class FetchTableRowItem extends BaseItem implements PlanItem {
 
     protected Table table;
-    
+
     protected String tableName;
-    
+
     protected ICsvListReader listReader;
-    
+
     public FetchTableRowItem(String path, String tableName) {
         super(true);
-        
+
         try {
             this.tableName = tableName;
-            
+
             this.table = new Table();
             this.table.setName(tableName);
-            
-            listReader =
-                    new CsvListReader(
+
+            listReader
+                    = new CsvListReader(
                             new FileReader(path + tableName + ".csv"),
                             CsvPreference.EXCEL_NORTH_EUROPE_PREFERENCE
                     );
-            
+
             List<String> list = listReader.read();
-            
-            for (String columnName:list) {
+
+            for (String columnName : list) {
                 table.getColumns().add(new Column(columnName));
             }
         } catch (FileNotFoundException ex) {
@@ -54,16 +54,18 @@ public class FetchTableRowItem extends BaseItem implements PlanItem {
     public RecordSet fetchResultRecordSet() {
         try {
             List<String> list = listReader.read();
-            
-            RecordSet rs = new RecordSet();
-            rs.setColumns(table.getColumns());
-            rs.addRow(Row.create(list));
-            
-            return rs;
+
+            if (list != null && !list.isEmpty()) {
+                RecordSet rs = new RecordSet();
+                rs.setColumns(table.getColumns());
+                rs.addRow(Row.create(list));
+
+                return rs;
+            }
         } catch (IOException e) {
-            
+            System.out.println("Error");
         }
-        
+
         return null;
     }
 
@@ -90,6 +92,5 @@ public class FetchTableRowItem extends BaseItem implements PlanItem {
     public void setListReader(ICsvListReader listReader) {
         this.listReader = listReader;
     }
-    
-    
+
 }
